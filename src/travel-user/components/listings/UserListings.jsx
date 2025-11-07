@@ -20,7 +20,6 @@ function UserListings() {
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [maxPrice, setMaxPrice] = useState(100000);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentListing, setCurrentListing] = useState(null);
   const [bookingDetails, setBookingDetails] = useState({
@@ -70,10 +69,8 @@ function UserListings() {
       );
     }
 
-    filtered = filtered.filter((l) => Number(l.price) <= maxPrice);
-
     setFilteredListings(filtered);
-  }, [listings, selectedCategory, maxPrice]);
+  }, [listings, selectedCategory]);
 
   const openModal = (listing) => {
     setCurrentListing(listing);
