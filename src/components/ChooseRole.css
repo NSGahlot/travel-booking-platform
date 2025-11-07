@@ -1,0 +1,30 @@
+.choose-role-container {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.choose-role-title {
+    margin: 0;
+}
+
+.choose-role-buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.role-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.admin-btn {
+    background-color: aliceblue;
+    color: black;
+   cursor: pointer;
+}
+
+.user-btn {}

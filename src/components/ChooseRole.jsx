@@ -1,22 +1,24 @@
 // src/components/ChooseRole.jsx
 import { useNavigate } from "react-router-dom";
+import "./ChooseRole.css";
 
 function ChooseRole() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h2>Choose Your Role</h2>
-      <div style={{ marginTop: "30px" }}>
+    <div className="choose-role-container">
+      <h2 className="choose-role-title">Choose Your Role</h2>
+
+      <div className="choose-role-buttons">
         <button
           onClick={() => navigate("/admin/auth")}
-          style={{ marginRight: "20px", padding: "10px 20px" }}
+          className="role-btn admin-btn"
         >
           Admin
         </button>
         <button
           onClick={() => navigate("/user/login")}
-          style={{ padding: "10px 20px" }}
+          className="role-btn user-btn"
         >
           User
         </button>

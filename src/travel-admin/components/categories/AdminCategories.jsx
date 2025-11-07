@@ -1,114 +1,123 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import AdminNav from "../AdminNav";
-
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
-
-// Fixed image URL for all categories
-const FIXED_IMAGE_URL =
-  "https://static2.tripoto.com/media/filter/nl/img/2025875/TripDocument/1601531054_these_traveling_tips_helps_me_having_hassle_free_journey.jpg";
+// src/travel-admin/components/categories/AdminCategories.jsx
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} from "../../../features/admin/categorySlice";
+import "./AdminCategories.css";
 
 function AdminCategories() {
-  const [categoryName, setCategoryName] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [editingId, setEditingId] = useState(null);
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.categories);
 
-  // Fetch categories from Firebase
-  const fetchCategories = async () => {
-    const res = await axios.get(`${DB_URL}/categories.json`);
-    if (res.data) {
-      const loaded = Object.entries(res.data).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-      setCategories(loaded);
-    } else setCategories([]);
-  };
+  const [newCat, setNewCat] = useState("");
+  const [editingCat, setEditingCat] = useState(null);
+  const [editingValue, setEditingValue] = useState("");
 
-  // Add or Update category
-  const handleAddOrUpdate = async (e) => {
-    e.preventDefault();
-    if (!categoryName.trim()) return;
-
-    if (editingId) {
-      await axios.patch(`${DB_URL}/categories/${editingId}.json`, {
-        name: categoryName,
-        image: FIXED_IMAGE_URL,
-      });
-      setEditingId(null);
-    } else {
-      await axios.post(`${DB_URL}/categories.json`, {
-        name: categoryName,
-        image: FIXED_IMAGE_URL,
-      });
+  // ✅ Add new category
+  const handleAdd = () => {
+    const trimmed = newCat.trim();
+    if (!trimmed) return;
+    if (categories.includes(trimmed)) {
+      alert("Category already exists!");
+      return;
     }
-
-    setCategoryName("");
-    fetchCategories();
+    dispatch(addCategory(trimmed));
+    setNewCat("");
   };
 
-  const handleEdit = (cat) => {
-    setEditingId(cat.id);
-    setCategoryName(cat.name);
+  // ✅ Update category
+  const handleUpdate = () => {
+    const trimmed = editingValue.trim();
+    if (!trimmed) return;
+    if (categories.includes(trimmed) && trimmed !== editingCat) {
+      alert("Category already exists!");
+      return;
+    }
+    dispatch(updateCategory({ oldName: editingCat, newName: trimmed }));
+    setEditingCat(null);
+    setEditingValue("");
   };
-
-  const handleDelete = async (id) => {
-    await axios.delete(`${DB_URL}/categories/${id}.json`);
-    fetchCategories();
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   return (
-    <div style={{ width: "400px", margin: "50px auto", textAlign: "center" }}>
-      <AdminNav />
-      <h2>Manage Categories</h2>
+    <div className="admin-categories-container">
+      <h2 className="admin-categories-title">Admin Categories</h2>
 
-      <form onSubmit={handleAddOrUpdate}>
+      {/* Add New Category */}
+      <div className="add-category-row">
         <input
           type="text"
-          placeholder="Enter category name"
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
-          required
+          placeholder="New Category"
+          value={newCat}
+          onChange={(e) => setNewCat(e.target.value)}
+          className="category-input"
         />
-        <br />
-        <button type="submit">
-          {editingId ? "Update Category" : "Add Category"}
+        <button onClick={handleAdd} className="add-btn">
+          Add
         </button>
-      </form>
+      </div>
 
-      <h3 style={{ marginTop: "30px" }}>All Categories</h3>
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {categories.map((cat) => (
-          <li key={cat.id} style={{ margin: "8px 0" }}>
-            {cat.name}
-            {cat.image && (
-              <img
-                src={cat.image}
-                alt={cat.name}
-                width="50"
-                style={{ marginLeft: "10px", verticalAlign: "middle" }}
-              />
-            )}
-            <button
-              style={{ marginLeft: "10px" }}
-              onClick={() => handleEdit(cat)}
-            >
-              Edit
-            </button>
-            <button
-              style={{ marginLeft: "5px" }}
-              onClick={() => handleDelete(cat.id)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* Category List */}
+      <table className="category-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((c) => (
+            <tr key={c}>
+              <td>
+                {editingCat === c ? (
+                  <input
+                    value={editingValue}
+                    onChange={(e) => setEditingValue(e.target.value)}
+                    className="edit-input"
+                  />
+                ) : (
+                  c
+                )}
+              </td>
+              <td>
+                {editingCat === c ? (
+                  <>
+                    <button onClick={handleUpdate} className="save-btn">
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingCat(null)}
+                      className="cancel-btn"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setEditingCat(c);
+                        setEditingValue(c);
+                      }}
+                      className="edit-btn"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => dispatch(deleteCategory(c))}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

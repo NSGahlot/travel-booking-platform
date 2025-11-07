@@ -1,53 +1,70 @@
+// src/travel-admin/components/auth/AdminLogin.jsx
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { loginAdmin } from "../../../api/firebaseAuth";
-import { setAdmin } from "../../../features/admin/adminSlice";
 import { useNavigate } from "react-router-dom";
+import { setAdmin } from "../../../features/admin/adminSlice";
+import axios from "axios";
+
+const DB_URL =
+  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
 
 function AdminLogin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Enter email and password");
+      return;
+    }
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
     try {
-      const res = await loginAdmin(email, password);
-      localStorage.setItem("adminToken", res.idToken);
+      // ✅ Fetch all admins from DB
+      const res = await axios.get(`${DB_URL}/admins.json`);
+      if (!res.data) {
+        alert("No admins found in database!");
+        return;
+      }
 
-      dispatch(setAdmin({ email, token: res.idToken }));
-      navigate("/admin/dashboard");
+      // ✅ Convert object to array and check credentials
+      const admins = Object.values(res.data);
+      const admin = admins.find(
+        (a) => a.email === email && a.password === password
+      );
+
+      if (admin) {
+        // ✅ Store admin info in Redux + LocalStorage
+        dispatch(setAdmin({ email: admin.email, token: Date.now() }));
+        localStorage.setItem("adminToken", Date.now());
+
+        navigate("/admin/dashboard");
+      } else {
+        alert("Invalid credentials");
+      }
     } catch (err) {
-      setError("Invalid credentials. Try again.");
+      console.error(err);
+      alert("Login failed. Check console.");
     }
   };
 
   return (
-    <div style={{ width: "300px", margin: "100px auto" }}>
+    <div>
       <h2>Admin Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Admin Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Admin Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }

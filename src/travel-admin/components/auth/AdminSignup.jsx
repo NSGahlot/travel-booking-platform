@@ -1,12 +1,16 @@
+// src/travel-admin/components/auth/AdminSignup.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ← add this
-import { signupAdmin } from "../../../api/firebaseAuth";
+import { useNavigate } from "react-router-dom";
 import { setAdmin } from "../../../features/admin/adminSlice";
 import { useDispatch } from "react-redux";
+import axios from "axios";
+
+const DB_URL =
+  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
 
 function AdminSignup() {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // ← useNavigate hook
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,15 +19,20 @@ function AdminSignup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-      const res = await signupAdmin(email, password);
-      dispatch(setAdmin({ email, token: res.idToken }));
-      localStorage.setItem("adminToken", res.idToken);
+      // ✅ Save admin in Firebase Realtime Database
+      const newAdmin = { email, password };
+      await axios.post(`${DB_URL}/admins.json`, newAdmin);
+
+      // ✅ Store admin info in Redux + LocalStorage
+      dispatch(setAdmin({ email, token: Date.now() }));
+      localStorage.setItem("adminToken", Date.now());
 
       setSuccess("Admin account created successfully!");
       setError("");
@@ -31,14 +40,16 @@ function AdminSignup() {
       setPassword("");
       setConfirmPassword("");
 
-      navigate("/admin/dashboard"); // ← redirect to dashboard
+      // ✅ Redirect to Dashboard
+      navigate("/admin/dashboard");
     } catch (err) {
+      console.error(err);
       setError("Signup failed. Try again.");
     }
   };
 
   return (
-    <div style={{ width: "320px", margin: "100px auto" }}>
+    <div>
       <h2>Admin Signup</h2>
       <form onSubmit={handleSignup}>
         <input
@@ -48,7 +59,6 @@ function AdminSignup() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <br />
         <input
           type="password"
           placeholder="Password"
@@ -56,7 +66,6 @@ function AdminSignup() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <br />
         <input
           type="password"
           placeholder="Confirm Password"
@@ -64,11 +73,11 @@ function AdminSignup() {
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
-        <br />
         <button type="submit">Signup</button>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
+
+      {error && <p>{error}</p>}
+      {success && <p>{success}</p>}
     </div>
   );
 }

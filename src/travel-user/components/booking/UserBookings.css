@@ -1,0 +1,50 @@
+.user-bookings-container {
+    max-width: 900px;
+    margin: 40px auto;
+   
+}
+
+.user-bookings-title {
+    text-align: center;
+}
+
+.user-bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.user-bookings-thead {
+    background: #1976d2;
+    color: #fff;
+}
+
+.user-bookings-table th,
+.user-bookings-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.no-bookings-cell {
+    text-align: center;
+    padding: 20px;
+}
+
+.user-bookings-row {
+    text-align: center;
+}
+
+.status-approved {
+    color: green;
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: red;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: orange;
+    font-weight: bold;
+}

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { signupUser } from "../../../api/firebaseUserAuth"; // 👈 updated import
+import { useNavigate } from "react-router-dom";
+import { signupUser } from "../../../api/firebaseUserAuth";
 import { setUser } from "../../../features/user/userSlice";
 
 function UserSignup() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,9 +17,10 @@ function UserSignup() {
       const res = await signupUser(email, password);
       localStorage.setItem("userToken", res.idToken);
       dispatch(setUser({ email, token: res.idToken }));
-      window.location.href = "/user/home";
+      navigate("/user/home");
     } catch (err) {
       setError("Signup failed. Try again.");
+      console.error(err);
     }
   };
 

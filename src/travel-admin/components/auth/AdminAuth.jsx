@@ -10,11 +10,11 @@ function AdminAuth() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
+    <div>
       {isLogin ? <AdminLogin /> : <AdminSignup />}
-      <p style={{ marginTop: "20px" }}>
+      <p>
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-        <button onClick={toggleAuth} style={{ cursor: "pointer" }}>
+        <button onClick={toggleAuth}>
           {isLogin ? "Sign up here" : "Login here"}
         </button>
       </p>

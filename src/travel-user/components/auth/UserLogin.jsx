@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../../api/firebaseUserAuth"; // 👈 updated import
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../../api/firebaseUserAuth";
 import { setUser } from "../../../features/user/userSlice";
 
 function UserLogin() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,9 +17,10 @@ function UserLogin() {
       const res = await loginUser(email, password);
       localStorage.setItem("userToken", res.idToken);
       dispatch(setUser({ email, token: res.idToken }));
-      window.location.href = "/user/home";
+      navigate("/user/home");
     } catch (err) {
       setError("Invalid credentials. Try again.");
+      console.error(err);
     }
   };
 
