@@ -1,50 +1,96 @@
+/* ---------- CONTAINER: roomy + nav ke niche space ---------- */
 .admin-listings-container {
-    max-width: 800px;
-    margin: 50px auto;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 96px 24px 40px;
+    /* 👈 top 96px: fixed nav se bachne ke liye, sides 24px */
+    background: #f6f8fa;
+    /* section background for separation */
+    box-sizing: border-box;
 }
 
+/* Title spacing */
 .admin-title {
     text-align: center;
+    margin: 0 0 20px;
+    /* 👈 bottom gap under heading */
 }
 
+/* ---------- FORM CARD: real card feel + consistent inner gaps ---------- */
 .form-card {
-    margin-bottom: 30px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    margin: 0 0 24px;
+    /* 👈 form aur table ke beech clear gap */
+    display: grid;
+    /* 👇 gap control without changing JSX */
+    grid-template-columns: 1fr;
+    row-gap: 12px;
 }
 
+/* Ye rule ensure karta hai ki form ke andar har element ke beech gap ho,
+   chahe input ho, textarea ho, select ho, label+checkbox ho, button ho */
+.form-card>*+* {
+    margin-top: 0;
+}
+
+/* clean slate (gap grid se aa raha) */
+
+/* Inputs polish */
 .form-input {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    box-sizing: border-box;
 }
 
+/* Checkbox row ke around spacing */
 .checkbox-row {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
+/* Button */
 .primary-btn {
+    align-self: start;
+    /* left align in grid */
     padding: 10px 20px;
     background: #1e88e5;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 4px;
 }
 
+/* ---------- TABLE: card-like + container se distance ---------- */
 .listings-table {
     width: 100%;
     border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 16px;
+    /* 👈 extra separation (form ke baad) */
 }
 
 .listings-table th,
 .listings-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.listings-table th {
+    background: #f3f6fb;
+    text-align: left;
+    color: #374151;
 }
 
 .row-center {
@@ -52,30 +98,78 @@
 }
 
 .desc-cell {
-    max-width: 150px;
+    max-width: 180px;
     overflow-wrap: anywhere;
 }
 
 .listings-table img {
     width: 80px;
     height: auto;
+    border-radius: 6px;
 }
 
-.edit-btn {
-    margin-right: 5px;
-    padding: 6px 12px;
-    background: #ff9800;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
+/* Action buttons */
+/* ---------- ACTION BUTTONS (fixed & polished) ---------- */
+.edit-btn,
 .delete-btn {
-    padding: 6px 12px;
-    background: #f44336;
-    color: #fff;
+    padding: 8px 14px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+/* edit */
+.edit-btn {
+    background: #ffb74d;
+    /* softer amber */
+    color: #fff;
+    margin-right: 8px;
+}
+
+.edit-btn:hover {
+    background: #fb8c00;
+    /* deeper orange on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* delete */
+.delete-btn {
+    background: #ef5350;
+    /* material red accent */
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background: #d32f2f;
+    /* darker red on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Table action column center alignment */
+.listings-table td:last-child {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ---------- Mobile tweaks ---------- */
+@media (max-width: 640px) {
+    .admin-listings-container {
+        padding: 84px 16px 28px;
+    }
+
+    /* thoda compact */
+    .form-card {
+        padding: 16px;
+        row-gap: 10px;
+    }
+
+    .listings-table th,
+    .listings-table td {
+        padding: 10px;
+    }
 }

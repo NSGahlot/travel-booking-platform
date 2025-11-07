@@ -1,8 +1,10 @@
+// src/travel-user/components/auth/UserSignup.jsx
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../../../api/firebaseUserAuth";
 import { setUser } from "../../../features/user/userSlice";
+import "./UserSignup.css"; // 👈 CSS import
 
 function UserSignup() {
   const dispatch = useDispatch();
@@ -25,28 +27,35 @@ function UserSignup() {
   };
 
   return (
-    <div style={{ width: "300px", margin: "100px auto" }}>
-      <h2>User Signup</h2>
-      <form onSubmit={handleSignup}>
+    <div className="user-signup-card">
+      <h2 className="user-signup-title">User Signup</h2>
+      <form onSubmit={handleSignup} className="user-signup-form">
+        <label className="user-signup-label">Email</label>
         <input
           type="email"
-          placeholder="User Email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="user-signup-input"
         />
-        <br />
+
+        <label className="user-signup-label">Password</label>
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Create a password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="user-signup-input"
         />
-        <br />
-        <button type="submit">Signup</button>
+
+        <button type="submit" className="user-signup-btn">
+          Signup
+        </button>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {error && <p className="user-signup-error">{error}</p>}
     </div>
   );
 }

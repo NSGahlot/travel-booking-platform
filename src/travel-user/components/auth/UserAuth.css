@@ -1,0 +1,67 @@
+/* -------- Page background -------- */
+.user-auth-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f6fa;
+    padding: 20px;
+}
+
+/* -------- Container -------- */
+.user-auth-container {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 26px 24px;
+    box-sizing: border-box;
+}
+
+/* -------- Card -------- */
+.user-auth-card {
+    text-align: center;
+}
+
+/* -------- Toggle section -------- */
+.user-auth-toggle {
+    margin-top: 18px;
+    font-size: 0.95rem;
+    color: #444;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+.user-auth-toggle p {
+    margin: 0 0 6px;
+}
+
+/* -------- Toggle button -------- */
+.toggle-btn {
+    background: #1e88e5;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 4px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background: #1565c0;
+}
+
+/* -------- Mobile responsiveness -------- */
+@media (max-width: 480px) {
+    .user-auth-container {
+        padding: 20px 16px;
+    }
+
+    .toggle-btn {
+        width: 100%;
+    }
+}

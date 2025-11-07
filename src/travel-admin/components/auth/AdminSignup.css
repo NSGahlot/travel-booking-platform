@@ -1,0 +1,76 @@
+.admin-signup-page {
+    text-align: center;
+}
+
+.admin-signup-card {
+    width: 100%;
+    padding: 20px;
+    /* 🟢 add padding inside the card */
+    box-sizing: border-box;
+}
+
+.admin-signup-header h2 {
+    color: #1e88e5;
+    margin-bottom: 6px;
+}
+
+.admin-signup-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.admin-signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 4px;
+    /* 🟢 inner spacing for inputs */
+}
+
+.admin-signup-label {
+    text-align: left;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.admin-signup-input {
+    width: 100%;
+    padding: 12px;
+    /* 🟢 better spacing inside input */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.admin-signup-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background: #1e88e5;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.admin-signup-btn:hover {
+    background: #1565c0;
+}
+
+.admin-signup-alert {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.admin-signup-alert.error {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.admin-signup-alert.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}

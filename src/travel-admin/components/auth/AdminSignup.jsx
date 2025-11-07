@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { setAdmin } from "../../../features/admin/adminSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import "./AdminSignup.css"; // 👈 add this
 
 const DB_URL =
   "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
@@ -22,15 +23,14 @@ function AdminSignup() {
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      setSuccess("");
       return;
     }
 
     try {
-      // ✅ Save admin in Firebase Realtime Database
       const newAdmin = { email, password };
       await axios.post(`${DB_URL}/admins.json`, newAdmin);
 
-      // ✅ Store admin info in Redux + LocalStorage
       dispatch(setAdmin({ email, token: Date.now() }));
       localStorage.setItem("adminToken", Date.now());
 
@@ -40,44 +40,70 @@ function AdminSignup() {
       setPassword("");
       setConfirmPassword("");
 
-      // ✅ Redirect to Dashboard
       navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
+      setSuccess("");
       setError("Signup failed. Try again.");
     }
   };
 
   return (
-    <div>
-      <h2>Admin Signup</h2>
-      <form onSubmit={handleSignup}>
-        <input
-          type="email"
-          placeholder="Admin Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Signup</button>
-      </form>
+    <div className="admin-signup-page">
+      <div className="admin-signup-card">
+        <div className="admin-signup-header">
+          <div className="admin-signup-logo">🛫</div>
+          <h2>Create Admin Account</h2>
+          <p className="admin-signup-subtitle">
+            Register to manage categories, listings & bookings.
+          </p>
+        </div>
 
-      {error && <p>{error}</p>}
-      {success && <p>{success}</p>}
+        <form onSubmit={handleSignup} className="admin-signup-form">
+          <label className="admin-signup-label">
+            Email
+            <input
+              type="email"
+              className="admin-signup-input"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+
+          <label className="admin-signup-label">
+            Password
+            <input
+              type="password"
+              className="admin-signup-input"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          <label className="admin-signup-label">
+            Confirm Password
+            <input
+              type="password"
+              className="admin-signup-input"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          <button type="submit" className="admin-signup-btn">
+            Signup
+          </button>
+
+          {error && <p className="admin-signup-alert error">{error}</p>}
+          {success && <p className="admin-signup-alert success">{success}</p>}
+        </form>
+      </div>
     </div>
   );
 }

@@ -1,30 +1,81 @@
+/* ---------- Container ---------- */
 .choose-role-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
     text-align: center;
-    margin-top: 100px;
+    padding: 20px;
 }
 
 .choose-role-title {
-    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e88e5;
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
 }
 
+/* ---------- Buttons Wrapper ---------- */
 .choose-role-buttons {
-    margin-top: 30px;
     display: flex;
-    gap: 20px;
+    gap: 24px;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
+/* ---------- Base Button ---------- */
 .role-btn {
-    padding: 10px 20px;
+    min-width: 150px;
+    padding: 14px 26px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
     cursor: pointer;
-    border-radius: 6px;
-    border: 1px solid #ddd;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
 }
 
+.role-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- Variants ---------- */
 .admin-btn {
-    background-color: aliceblue;
-    color: black;
-   cursor: pointer;
+    background: linear-gradient(135deg, #1e88e5, #42a5f5);
 }
 
-.user-btn {}
+.user-btn {
+    background: linear-gradient(135deg, #43a047, #66bb6a);
+}
+
+/* ---------- Active / Focus States ---------- */
+.role-btn:active {
+    transform: translateY(0);
+}
+
+.role-btn:focus-visible {
+    outline: 3px solid rgba(30, 136, 229, 0.4);
+    outline-offset: 3px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 500px) {
+    .choose-role-title {
+        font-size: 1.6rem;
+    }
+
+    .role-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .choose-role-buttons {
+        gap: 16px;
+    }
+}
