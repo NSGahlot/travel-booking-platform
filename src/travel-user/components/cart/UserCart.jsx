@@ -9,8 +9,7 @@ import {
 } from "../../../features/user/cartSlice";
 import "./UserCart.css";
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function UserCart() {
   const dispatch = useDispatch();
@@ -19,14 +18,12 @@ function UserCart() {
   const [approvedBookings, setApprovedBookings] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  // 🔔 Navbar se aane wale custom event ko listen karke open/close
   useEffect(() => {
     const toggle = () => setIsOpen((v) => !v);
     window.addEventListener("toggle-cart", toggle);
     return () => window.removeEventListener("toggle-cart", toggle);
   }, []);
 
-  // Fetch approved bookings for global cart
   const fetchApprovedBookings = useCallback(async () => {
     try {
       const res = await axios.get(`${DB_URL}/bookings.json`);
@@ -97,8 +94,6 @@ function UserCart() {
 
   return (
     <>
-      {/* ⛔ Floating toggle button removed. Now UserNav toggles via window event. */}
-
       {isOpen && (
         <>
           <div onClick={() => setIsOpen(false)} className="cart-overlay" />

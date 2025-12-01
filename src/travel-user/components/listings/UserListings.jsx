@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 import UserNav from "../UserNav";
 import "./UserListings.css";
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 const FIXED_IMAGE_URL =
   "https://static2.tripoto.com/media/filter/nl/img/2025875/TripDocument/1601531054_these_traveling_tips_helps_me_having_hassle_free_journey.jpg";
 

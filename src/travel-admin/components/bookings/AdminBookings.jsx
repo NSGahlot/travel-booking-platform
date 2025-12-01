@@ -2,13 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import "./AdminBookings.css";
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function AdminBookings() {
   const [bookings, setBookings] = useState([]);
 
-  // ✅ Wrap fetchBookings inside useCallback to prevent re-creation on every render
   const fetchBookings = useCallback(async () => {
     try {
       const res = await axios.get(`${DB_URL}/bookings.json`);
@@ -25,7 +23,7 @@ function AdminBookings() {
       console.error("Error fetching bookings:", err);
       setBookings([]);
     }
-  }, []); // No dependencies → stable reference
+  }, []);
 
   const updateStatus = async (id, newStatus) => {
     try {
@@ -38,7 +36,6 @@ function AdminBookings() {
     }
   };
 
-  // ✅ Now safely include fetchBookings in dependencies
   useEffect(() => {
     fetchBookings();
     const interval = setInterval(fetchBookings, 3000);

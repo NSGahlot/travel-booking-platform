@@ -1,13 +1,12 @@
 // src/features/admin/categorySlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
-// ✅ Load initial state from localStorage if available
 const loadCategories = () => {
   try {
     const serialized = localStorage.getItem("categories");
-    if (serialized === null) return ["Villa", "Apartment", "Houseboat"]; // default categories
+    if (serialized === null) return ["Villa", "Apartment", "Houseboat"];
     return JSON.parse(serialized);
-  } catch (e) {
+  } catch {
     return ["Villa", "Apartment", "Houseboat"];
   }
 };

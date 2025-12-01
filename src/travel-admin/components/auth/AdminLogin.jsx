@@ -4,10 +4,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAdmin } from "../../../features/admin/adminSlice";
 import axios from "axios";
-import "./AdminLogin.css"; // 👈 add this import
+import "./AdminLogin.css";
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../../api/firebaseUserAuth";
 import { setUser } from "../../../features/user/userSlice";
-import "./UserLogin.css"; // 👈 CSS import
+import "./UserLogin.css";
 
 function UserLogin() {
   const dispatch = useDispatch();

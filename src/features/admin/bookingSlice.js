@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  bookings: [], // admin bookings
+  bookings: [],
 };
 
 const bookingSlice = createSlice({

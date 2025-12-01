@@ -10,8 +10,7 @@ import {
 import { setCategories } from "../../../features/admin/categorySlice";
 import "./AdminListings.css";
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 const FIXED_IMAGE_URL =
   "https://static2.tripoto.com/media/filter/nl/img/2025875/TripDocument/1601531054_these_traveling_tips_helps_me_having_hassle_free_journey.jpg";
 
@@ -158,7 +157,7 @@ function AdminListings() {
           }
           className="form-input"
         />
-        <input
+        {/* <input
           type="text"
           placeholder="Image URL"
           value={newListing.image}
@@ -166,7 +165,7 @@ function AdminListings() {
             setNewListing({ ...newListing, image: e.target.value })
           }
           className="form-input"
-        />
+        /> */}
 
         {/* Availability Checkbox */}
         <label className="checkbox-row">

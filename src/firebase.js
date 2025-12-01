@@ -3,14 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBqpYDjh7aL6g6Fu0TWadOAiOZmRVys4zU",
-  authDomain: "travel-website-project-27e70.firebaseapp.com",
-  databaseURL:
-    "https://travel-website-project-27e70-default-rtdb.firebaseio.com",
-  projectId: "travel-website-project-27e70",
-  storageBucket: "travel-website-project-27e70.firebasestorage.app",
-  messagingSenderId: "194717453239",
-  appId: "1:194717453239:web:c915f07faf7b10e84a7632",
+  apiKey: "AIzaSyCFeRNJn-Mm8lipO6AnjcKgOoQXygdzHaE",
+  authDomain: "travel-app-2d78a.firebaseapp.com",
+  databaseURL: "https://travel-app-2d78a-default-rtdb.firebaseio.com",
+  projectId: "travel-app-2d78a",
+  storageBucket: "travel-app-2d78a.firebasestorage.app",
+  messagingSenderId: "727966757646",
+  appId: "1:727966757646:web:be7ef4be68ac77e65fdd5f",
 };
 
 // Initialize Firebase

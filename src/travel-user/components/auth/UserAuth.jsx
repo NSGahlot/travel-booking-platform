@@ -3,7 +3,7 @@
 import { useState } from "react";
 import UserLogin from "./UserLogin";
 import UserSignup from "./UserSignup";
-import "./UserAuth.css"; // 👈 CSS import
+import "./UserAuth.css";
 
 function UserAuth() {
   const [isLogin, setIsLogin] = useState(true);

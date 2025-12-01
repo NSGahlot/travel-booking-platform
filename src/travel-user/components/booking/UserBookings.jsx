@@ -4,14 +4,12 @@ import axios from "axios";
 import "./UserBookings.css";
 import UserNav from "../UserNav";
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function UserBookings() {
   const user = useSelector((state) => state.user);
   const [bookings, setBookings] = useState([]);
 
-  // ✅ useCallback to stabilize the function reference
   const getUserBookings = useCallback(async () => {
     try {
       const res = await axios.get(`${DB_URL}/bookings.json`);
@@ -21,7 +19,6 @@ function UserBookings() {
           ...value,
         }));
 
-        // Filter by user email if available, else show all as fallback
         const userBookings = allBookings.filter((b) =>
           b.userEmail ? b.userEmail === user.email : true
         );
@@ -34,9 +31,8 @@ function UserBookings() {
       console.error("Error fetching bookings:", err);
       setBookings([]);
     }
-  }, [user.email]); // ✅ dependency added here only
+  }, [user.email]);
 
-  // ✅ Safe useEffect
   useEffect(() => {
     getUserBookings();
     const interval = setInterval(getUserBookings, 3000);

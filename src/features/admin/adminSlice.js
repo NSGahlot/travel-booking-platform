@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   email: null,
   token: localStorage.getItem("adminToken") || null,
-  categories: [], // ✅ categories ka state
+  categories: [],
 };
 
 const adminSlice = createSlice({

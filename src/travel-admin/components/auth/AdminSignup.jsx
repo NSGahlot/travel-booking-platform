@@ -6,8 +6,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import "./AdminSignup.css"; // 👈 add this
 
-const DB_URL =
-  "https://travel-website-project-27e70-default-rtdb.firebaseio.com";
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function AdminSignup() {
   const dispatch = useDispatch();

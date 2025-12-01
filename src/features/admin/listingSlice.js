@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  listings: [], // ✅ must have 'listings' array
+  listings: [],
 };
 
 const listingSlice = createSlice({

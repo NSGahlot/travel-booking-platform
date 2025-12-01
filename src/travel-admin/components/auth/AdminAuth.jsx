@@ -2,7 +2,7 @@
 import { useState } from "react";
 import AdminLogin from "./AdminLogin";
 import AdminSignup from "./AdminSignup";
-import "./AdminAuth.css"; // 👈 import CSS
+import "./AdminAuth.css";
 
 function AdminAuth() {
   const [isLogin, setIsLogin] = useState(true);
