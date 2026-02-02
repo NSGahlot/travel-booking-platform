@@ -1,7 +1,8 @@
 .user-footer {
-    background-color: #1e88e5;
+    background: linear-gradient(135deg, #1e88e5, #3f51b5);
     color: #fff;
     padding: 20px;
     text-align: center;
     margin-top: 40px;
+    font-weight: 600;
 }

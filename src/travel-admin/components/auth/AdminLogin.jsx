@@ -3,10 +3,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAdmin } from "../../../features/admin/adminSlice";
-import axios from "axios";
+import { loginAdmin } from "../../../api/firebaseAuth";
 import "./AdminLogin.css";
-
-const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -21,27 +19,13 @@ function AdminLogin() {
     }
 
     try {
-      const res = await axios.get(`${DB_URL}/admins.json`);
-      if (!res.data) {
-        alert("No admins found in database!");
-        return;
-      }
-
-      const admins = Object.values(res.data);
-      const admin = admins.find(
-        (a) => a.email === email && a.password === password
-      );
-
-      if (admin) {
-        dispatch(setAdmin({ email: admin.email, token: Date.now() }));
-        localStorage.setItem("adminToken", Date.now());
-        navigate("/admin/dashboard");
-      } else {
-        alert("Invalid credentials");
-      }
+      const res = await loginAdmin(email, password);
+      dispatch(setAdmin({ email: res.email, token: res.idToken }));
+      localStorage.setItem("adminToken", res.idToken);
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
-      alert("Login failed. Check console.");
+      alert("Login failed. Check credentials.");
     }
   };
 

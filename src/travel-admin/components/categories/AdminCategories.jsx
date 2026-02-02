@@ -16,7 +16,6 @@ function AdminCategories() {
   const [editingCat, setEditingCat] = useState(null);
   const [editingValue, setEditingValue] = useState("");
 
-  // ✅ Add new category
   const handleAdd = () => {
     const trimmed = newCat.trim();
     if (!trimmed) return;
@@ -28,7 +27,6 @@ function AdminCategories() {
     setNewCat("");
   };
 
-  // ✅ Update category
   const handleUpdate = () => {
     const trimmed = editingValue.trim();
     if (!trimmed) return;

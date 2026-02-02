@@ -1,36 +1,63 @@
+/* ---------- Nav Shell ---------- */
 .user-nav {
-    background: #1e88e5;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(135deg, #1e88e5, #3f51b5);
     color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 40px;
+    padding: 14px 36px;
+    box-shadow: 0 10px 24px rgba(30, 136, 229, 0.25);
+    backdrop-filter: blur(6px);
 }
 
 .user-nav-logo {
-    font-weight: bold;
-    font-size: 1.4rem;
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: 0.2px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .user-nav-links {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 14px;
+    border-radius: 999px;
 }
 
 .user-nav-links span {
     color: #fff;
     cursor: pointer;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 999px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user-nav-links span:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
 }
 
 .user-nav-right {
     display: flex;
     align-items: center;
+    gap: 12px;
 }
 
 .user-email {
-    margin-right: 15px;
+    margin-right: 6px;
+    font-size: 0.92rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 10px;
+    border-radius: 999px;
 }
 
 .logout-btn {
@@ -38,15 +65,22 @@
     color: #1e88e5;
     border: none;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 999px;
     cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Cart button inside nav */
 .nav-cart-btn {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.16);
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.28);
     padding: 8px 12px;
     border-radius: 999px;
     cursor: pointer;
@@ -54,10 +88,13 @@
     align-items: center;
     gap: 8px;
     position: relative;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .nav-cart-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.24);
+    transform: translateY(-1px);
 }
 
 /* small count badge */
@@ -66,12 +103,25 @@
     height: 18px;
     padding: 0 6px;
     border-radius: 999px;
-    background: #ff5252;
+    background: linear-gradient(135deg, #ff5252, #ff7b7b);
     color: #fff;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 800;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-left: 6px;
+}
+
+@media (max-width: 900px) {
+    .user-nav {
+        padding: 12px 18px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .user-nav-links {
+        width: 100%;
+        justify-content: center;
+    }
 }

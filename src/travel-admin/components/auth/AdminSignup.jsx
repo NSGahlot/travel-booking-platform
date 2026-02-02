@@ -3,10 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setAdmin } from "../../../features/admin/adminSlice";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+import { signupAdmin } from "../../../api/firebaseAuth";
 import "./AdminSignup.css"; // 👈 add this
-
-const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function AdminSignup() {
   const dispatch = useDispatch();
@@ -27,11 +25,10 @@ function AdminSignup() {
     }
 
     try {
-      const newAdmin = { email, password };
-      await axios.post(`${DB_URL}/admins.json`, newAdmin);
+      const res = await signupAdmin(email, password);
 
-      dispatch(setAdmin({ email, token: Date.now() }));
-      localStorage.setItem("adminToken", Date.now());
+      dispatch(setAdmin({ email: res.email, token: res.idToken }));
+      localStorage.setItem("adminToken", res.idToken);
 
       setSuccess("Admin account created successfully!");
       setError("");
