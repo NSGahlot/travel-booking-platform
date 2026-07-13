@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import UserNav from "../UserNav";
 import "./UserListings.css";
 
@@ -12,10 +12,14 @@ const FIXED_IMAGE_URL =
 
 function UserListings() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const destination = searchParams.get("destination") || "";
+  // const guests = Number(searchParams.get("guests")) || 1;
   const userToken = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user);
   const adminCategories = useSelector(
-    (state) => state.categories.categories || []
+    (state) => state.categories.categories || [],
   );
 
   const [listings, setListings] = useState([]);
@@ -53,16 +57,11 @@ function UserListings() {
 
   useEffect(() => {
     fetchListings();
-    const interval = setInterval(fetchListings, 5000);
-    return () => clearInterval(interval);
   }, [fetchListings]);
 
   const maxListingPrice = useMemo(() => {
     if (listings.length === 0) return 10000;
-    return Math.max(
-      10000,
-      ...listings.map((l) => Number(l.price || 0))
-    );
+    return Math.max(10000, ...listings.map((l) => Number(l.price || 0)));
   }, [listings]);
 
   useEffect(() => {
@@ -74,17 +73,29 @@ function UserListings() {
       (l) =>
         l.available === true ||
         l.available === "true" ||
-        l.available === undefined
+        l.available === undefined,
     );
 
+    // Destination Search
+    if (destination) {
+      filtered = filtered.filter(
+        (listing) =>
+          listing.name?.toLowerCase().includes(destination.toLowerCase()) ||
+          listing.address?.toLowerCase().includes(destination.toLowerCase()) ||
+          listing.category?.toLowerCase().includes(destination.toLowerCase()),
+      );
+    }
+
+    // Category Filter
     if (selectedCategory !== "All") {
       filtered = filtered.filter(
         (l) =>
           l.category &&
-          l.category.trim().toLowerCase() === selectedCategory.toLowerCase()
+          l.category.trim().toLowerCase() === selectedCategory.toLowerCase(),
       );
     }
 
+    // Price Filter
     const minPrice = 0;
     const maxPriceValue = Number.isFinite(Number(maxPrice))
       ? Number(maxPrice)
@@ -95,29 +106,19 @@ function UserListings() {
       return price >= minPrice && price <= maxPriceValue;
     });
 
+    // Sorting
     if (sortBy === "price-asc") {
-      filtered = [...filtered].sort(
-        (a, b) => Number(a.price || 0) - Number(b.price || 0)
-      );
+      filtered.sort((a, b) => Number(a.price) - Number(b.price));
     } else if (sortBy === "price-desc") {
-      filtered = [...filtered].sort(
-        (a, b) => Number(b.price || 0) - Number(a.price || 0)
+      filtered.sort((a, b) => Number(b.price) - Number(a.price));
+    } else {
+      filtered.sort(
+        (a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0),
       );
-    } else if (sortBy === "newest") {
-      filtered = [...filtered].sort((a, b) => {
-        const aDate = new Date(a.createdAt || 0).getTime();
-        const bDate = new Date(b.createdAt || 0).getTime();
-        return bDate - aDate;
-      });
     }
 
     setFilteredListings(filtered);
-  }, [
-    listings,
-    selectedCategory,
-    maxPrice,
-    sortBy,
-  ]);
+  }, [listings, selectedCategory, maxPrice, sortBy, destination]);
 
   const openModal = (listing) => {
     setCurrentListing(listing);
@@ -132,6 +133,8 @@ function UserListings() {
   };
 
   const handleBooking = async () => {
+    console.log("Current User :", user);
+    console.log("User EMail :", user.email);
     const { name, checkIn, checkOut, guests, address } = bookingDetails;
 
     if (!name || !checkIn || !checkOut || !address) {
@@ -177,7 +180,6 @@ function UserListings() {
     setMaxPrice(Number(value));
   };
 
-
   return (
     <>
       <UserNav />
@@ -209,9 +211,7 @@ function UserListings() {
                 ))}
               </div>
               <div className="ul-price-range">
-                <div className="range-label">
-                  Max Price: ₹{maxPrice}
-                </div>
+                <div className="range-label">Max Price: ₹{maxPrice}</div>
                 <div className="range-inputs">
                   <input
                     type="range"
@@ -263,12 +263,23 @@ function UserListings() {
                       alt={l.name || "Listing Image"}
                       className="listing-image"
                     />
-                    <button
-                      onClick={() => openModal(l)}
-                      className="book-now-btn"
-                    >
-                      Book Now
-                    </button>
+                    <div className="listing-actions">
+                      <button
+                        type="button"
+                        className="details-btn"
+                        onClick={() => navigate(`/user/listings/${l.id}`)}
+                      >
+                        View Details
+                      </button>
+
+                      <button
+                        type="button"
+                        className="book-now-btn"
+                        onClick={() => openModal(l)}
+                      >
+                        Book Now
+                      </button>
+                    </div>
                   </div>
                 ))
               )}

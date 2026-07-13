@@ -8,21 +8,19 @@ const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function UserBookings() {
   const user = useSelector((state) => state.user);
-  const userToken = useSelector((state) => state.user.token);
   const [bookings, setBookings] = useState([]);
-  const authQuery = userToken ? `?auth=${userToken}` : "";
 
   const getUserBookings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/bookings.json${authQuery}`);
+      const res = await axios.get(`${DB_URL}/bookings.json`);
       if (res.data) {
         const allBookings = Object.entries(res.data).map(([id, value]) => ({
           id,
           ...value,
         }));
 
-        const userBookings = allBookings.filter((b) =>
-          b.userEmail ? b.userEmail === user.email : true
+        const userBookings = allBookings.filter(
+          (b) => b.userEmail === user.email,
         );
 
         setBookings(userBookings);
@@ -33,20 +31,18 @@ function UserBookings() {
       console.error("Error fetching bookings:", err);
       setBookings([]);
     }
-  }, [user.email, authQuery]);
+  }, [user.email]);
 
   useEffect(() => {
     getUserBookings();
-    const interval = setInterval(getUserBookings, 3000);
-    return () => clearInterval(interval);
   }, [getUserBookings]);
 
   const statusClass = (status) =>
     status === "Approved"
       ? "status-approved"
       : status === "Rejected"
-      ? "status-rejected"
-      : "status-pending";
+        ? "status-rejected"
+        : "status-pending";
 
   return (
     <div className="user-bookings-container">

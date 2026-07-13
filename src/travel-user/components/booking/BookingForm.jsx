@@ -26,10 +26,16 @@ function BookingForm({ listing }) {
         listingId: listing.id,
         price: listing.price,
         address: listing.address,
-        userEmail: user.email,
+
+        userName: user.name || "Guest",
+        userEmail: user.email || "",
+
         checkIn: formData.checkIn,
         checkOut: formData.checkOut,
         guests: formData.guests,
+
+        bookingDate: new Date().toISOString(),
+
         status: "Pending",
       };
 

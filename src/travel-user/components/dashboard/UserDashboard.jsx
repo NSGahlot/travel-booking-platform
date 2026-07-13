@@ -29,15 +29,22 @@ function UserDashboard() {
         if (res.data) {
           const allBookings = Object.values(res.data);
 
-          const userBookings = user.email
-            ? allBookings.filter((b) => b.userEmail === user.email)
-            : allBookings;
+          if (!user.email) {
+            setBookings([]);
+            setApprovedCount(0);
+            return;
+          }
+
+          const userBookings = allBookings.filter(
+            (b) => b.userEmail === user.email,
+          );
 
           setBookings(userBookings);
 
           const approved = userBookings.filter(
-            (b) => b.status === "Approved"
+            (b) => b.status === "Approved",
           ).length;
+
           setApprovedCount(approved);
         } else {
           setBookings([]);
@@ -71,7 +78,7 @@ function UserDashboard() {
 
   const featuredListings = useMemo(
     () => listings.filter((l) => l.available !== false).slice(0, 4),
-    [listings]
+    [listings],
   );
 
   const recommendedListings = useMemo(() => {
@@ -95,7 +102,26 @@ function UserDashboard() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate("/user/listings");
+
+    const params = new URLSearchParams();
+
+    if (searchForm.destination.trim()) {
+      params.set("destination", searchForm.destination.trim());
+    }
+
+    if (searchForm.checkIn) {
+      params.set("checkIn", searchForm.checkIn);
+    }
+
+    if (searchForm.checkOut) {
+      params.set("checkOut", searchForm.checkOut);
+    }
+
+    if (searchForm.guests) {
+      params.set("guests", searchForm.guests);
+    }
+
+    navigate(`/user/listings?${params.toString()}`);
   };
 
   return (
@@ -105,7 +131,9 @@ function UserDashboard() {
         <section className="udb-hero">
           <div className="udb-hero-content">
             <p className="udb-hero-badge">✨ Your Travel Hub</p>
-            <h1 className="udb-title">👋 Welcome, {user.email || "Traveler"}</h1>
+            <h1 className="udb-title">
+              👋 Welcome, {user.email || "Traveler"}
+            </h1>
             <p className="udb-subtitle">
               Ready to explore new destinations? Discover curated stays and
               track your bookings in one place.
@@ -244,8 +272,8 @@ function UserDashboard() {
                         b.status === "Approved"
                           ? "approved"
                           : b.status === "Rejected"
-                          ? "rejected"
-                          : "pending"
+                            ? "rejected"
+                            : "pending"
                       }`}
                     >
                       {b.status || "Pending"}
@@ -281,7 +309,6 @@ function UserDashboard() {
             )}
           </div>
         </section>
-
       </div>
     </>
   );

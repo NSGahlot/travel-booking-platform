@@ -1,16 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+
+import {
+  getListings,
+  addListing as addListingService,
+  updateListing as updateListingService,
+  deleteListing as deleteListingService,
+} from "../../../services/listingService";
+
 import {
   setListings,
   addListing,
   deleteListing,
   updateListing,
 } from "../../../features/admin/listingSlice";
+
 import { setCategories } from "../../../features/admin/categorySlice";
+
 import "./AdminListings.css";
 
-const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 const FIXED_IMAGE_URL =
   "https://static2.tripoto.com/media/filter/nl/img/2025875/TripDocument/1601531054_these_traveling_tips_helps_me_having_hassle_free_journey.jpg";
 
@@ -35,18 +43,22 @@ function AdminListings() {
 
   const fetchListings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/listings.json${authQuery}`);
-      if (res.data) {
-        const loaded = Object.entries(res.data).map(([id, value]) => ({
+      const data = await getListings();
+
+      if (data) {
+        const loaded = Object.entries(data).map(([id, value]) => ({
           id,
           ...value,
         }));
+
         dispatch(setListings(loaded));
+      } else {
+        dispatch(setListings([]));
       }
     } catch (err) {
       console.error("Error fetching listings:", err);
     }
-  }, [dispatch, authQuery]);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchListings();
@@ -71,7 +83,7 @@ function AdminListings() {
       if (editingId) {
         await axios.put(
           `${DB_URL}/listings/${editingId}.json${authQuery}`,
-          newListing
+          newListing,
         );
         dispatch(updateListing({ id: editingId, ...newListing }));
         setEditingId(null);
@@ -79,7 +91,7 @@ function AdminListings() {
         const payload = { ...newListing, createdAt: Date.now() };
         const res = await axios.post(
           `${DB_URL}/listings.json${authQuery}`,
-          payload
+          payload,
         );
         dispatch(addListing({ id: res.data.name, ...payload }));
       }
@@ -108,7 +120,6 @@ function AdminListings() {
       alert("Failed to delete listing. Check console for details.");
     }
   };
-
 
   const handleEdit = (listing) => {
     setEditingId(listing.id);
@@ -232,7 +243,7 @@ function AdminListings() {
                     };
                     await axios.put(
                       `${DB_URL}/listings/${l.id}.json${authQuery}`,
-                      updatedListing
+                      updatedListing,
                     );
                     dispatch(updateListing(updatedListing));
                   }}

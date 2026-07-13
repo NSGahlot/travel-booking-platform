@@ -17,12 +17,23 @@ function UserLogin() {
     e.preventDefault();
     try {
       const res = await loginUser(email, password);
-      localStorage.setItem("userToken", res.idToken);
-      dispatch(setUser({ email, token: res.idToken }));
+
+      dispatch(
+        setUser({
+          email: res.email || email,
+          token: res.idToken,
+        }),
+      );
+
       navigate("/user/home");
     } catch (err) {
-      setError("Invalid credentials. Try again.");
       console.error(err);
+
+      if (err.message?.includes("INVALID_LOGIN_CREDENTIALS")) {
+        setError("Invalid email or password.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 

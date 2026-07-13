@@ -1,45 +1,5 @@
-.cart-toggle-btn {
-    position: fixed;
-    top: 90px;
-    right: 25px;
-    z-index: 500;
-    padding: 12px 20px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 10px 24px rgba(15, 118, 110, 0.25);
-    transition: all 0.2s ease;
-}
-
 .cart-toggle-btn:hover {
     transform: translateY(-2px);
-}
-
-.cart-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(15, 23, 42, 0.35);
-    z-index: 999;
-    backdrop-filter: blur(3px);
-}
-
-.cart-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 360px;
-    height: 100%;
-    background: var(--card);
-    padding: 22px;
-    z-index: 1001;
-    overflow-y: auto;
-    box-shadow: -10px 0 30px rgba(15, 23, 42, 0.12);
-    backdrop-filter: none;
 }
 
 .cart-panel h3 {
@@ -119,4 +79,81 @@
     margin-top: 10px;
     font-weight: 800;
     box-shadow: 0 10px 22px rgba(20, 184, 166, 0.25);
+}
+
+.cart-page {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.cart-page h3 {
+    font-size: 30px;
+    margin-bottom: 25px;
+    color: #0f172a;
+}
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.cart-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cart-right {
+    position: sticky;
+    top: 100px;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    border: 1px solid #e5e7eb;
+}
+
+.summary-card h3 {
+    margin-bottom: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 14px 0;
+    font-size: 15px;
+}
+
+.summary-total {
+    margin-top: 20px;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.cart-card {
+    transition: .3s;
+}
+
+.cart-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .08);
+}
+
+@media(max-width:900px) {
+
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-right {
+        position: static;
+    }
+
 }

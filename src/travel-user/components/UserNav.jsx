@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { logoutUser } from "../../features/user/userSlice";
 import "./UserNav.css";
 
@@ -15,10 +15,6 @@ function UserNav() {
     navigate("/user/login");
   };
 
-  const toggleCart = () => {
-    window.dispatchEvent(new CustomEvent("toggle-cart"));
-  };
-
   return (
     <nav className="user-nav">
       <div className="user-nav-logo" onClick={() => navigate("/user/home")}>
@@ -26,14 +22,40 @@ function UserNav() {
       </div>
 
       <div className="user-nav-links">
-        <span onClick={() => navigate("/user/home")}>🏠 Home</span>
-        <span onClick={() => navigate("/user/listings")}>🧭 Listings</span>
-        <span onClick={() => navigate("/user/bookings")}>📘 Bookings</span>
+        <NavLink
+          to="/user/home"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
+          🏠 Home
+        </NavLink>
+        <NavLink
+          to="/user/listings"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
+          🧭 Listings
+        </NavLink>
+        <NavLink
+          to="/user/bookings"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
+          📘 Bookings
+        </NavLink>
 
-        <button type="button" className="nav-cart-btn" onClick={toggleCart}>
+        <NavLink
+          to="/user/cart"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           🛒 Cart
           {cartCount > 0 && <span className="nav-cart-badge">{cartCount}</span>}
-        </button>
+        </NavLink>
       </div>
 
       <div className="user-nav-right">

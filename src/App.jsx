@@ -7,6 +7,7 @@ import AdminCategories from "./travel-admin/components/categories/AdminCategorie
 import AdminListings from "./travel-admin/components/listings/AdminListings";
 import AdminBookings from "./travel-admin/components/bookings/AdminBookings";
 import ProtectedRoute from "./travel-admin/components/auth/ProtectedRoute";
+import ListingDetails from "./travel-user/components/listings/ListingDetails";
 
 import UserAuth from "./travel-user/components/auth/UserAuth";
 import UserHome from "./travel-user/components/dashboard/UserDashboard";
@@ -60,7 +61,6 @@ function App() {
           path="/user/home"
           element={
             <UserProtectedRoute>
-              <UserCart />
               <UserHome />
             </UserProtectedRoute>
           }
@@ -69,8 +69,15 @@ function App() {
           path="/user/listings"
           element={
             <UserProtectedRoute>
-              <UserCart />
               <UserListings />
+            </UserProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/listings/:id"
+          element={
+            <UserProtectedRoute>
+              <ListingDetails />
             </UserProtectedRoute>
           }
         />
@@ -78,8 +85,16 @@ function App() {
           path="/user/bookings"
           element={
             <UserProtectedRoute>
-              <UserCart />
               <UserBookings />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/cart"
+          element={
+            <UserProtectedRoute>
+              <UserCart />
             </UserProtectedRoute>
           }
         />

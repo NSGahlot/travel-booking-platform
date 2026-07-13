@@ -8,6 +8,7 @@ import {
   updateCartItem,
 } from "../../../features/user/cartSlice";
 import "./UserCart.css";
+import UserNav from "../UserNav";
 
 const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
@@ -17,14 +18,7 @@ function UserCart() {
   const user = useSelector((state) => state.user);
   const userToken = useSelector((state) => state.user.token);
   const [approvedBookings, setApprovedBookings] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
   const authQuery = userToken ? `?auth=${userToken}` : "";
-
-  useEffect(() => {
-    const toggle = () => setIsOpen((v) => !v);
-    window.addEventListener("toggle-cart", toggle);
-    return () => window.removeEventListener("toggle-cart", toggle);
-  }, []);
 
   const fetchApprovedBookings = useCallback(async () => {
     try {
@@ -34,11 +28,11 @@ function UserCart() {
           id,
           ...value,
         }));
+
         const approved = allBookings.filter(
-          (b) =>
-            b.status === "Approved" &&
-            (b.userEmail ? b.userEmail === user.email : true)
+          (b) => b.status === "Approved" && b.userEmail === user.email,
         );
+
         setApprovedBookings(approved);
       }
     } catch (err) {
@@ -48,13 +42,11 @@ function UserCart() {
 
   useEffect(() => {
     fetchApprovedBookings();
-    const interval = setInterval(fetchApprovedBookings, 5000);
-    return () => clearInterval(interval);
   }, [fetchApprovedBookings]);
 
   const totalAmount = [...cartItems, ...approvedBookings].reduce(
     (sum, item) => sum + Number(item.price),
-    0
+    0,
   );
 
   const handleCheckout = async () => {
@@ -98,119 +90,121 @@ function UserCart() {
 
   return (
     <>
-      {isOpen && (
-        <>
-          <div onClick={() => setIsOpen(false)} className="cart-overlay" />
-          <div className="cart-panel">
-            <h3>Your Cart & Approved Bookings</h3>
+      <UserNav />
 
-            {[...cartItems, ...approvedBookings].length === 0 && (
-              <p className="cart-empty">Cart is empty.</p>
-            )}
+      <div className="cart-page">
+        <h3>Your Cart & Approved Bookings</h3>
 
-            {[...cartItems, ...approvedBookings].map((item) => (
-              <div key={item.id} className="cart-card">
-                <p className="cart-item-title">
-                  <strong>{item.listingName}</strong>
+        {[...cartItems, ...approvedBookings].length === 0 && (
+          <p className="cart-empty">Cart is empty.</p>
+        )}
+
+        {[...cartItems, ...approvedBookings].map((item) => (
+          <div key={item.id} className="cart-card">
+            <p className="cart-item-title">
+              <strong>{item.listingName}</strong>
+            </p>
+
+            <p className="cart-item-price">Price: ₹{item.price}</p>
+
+            {cartItems.includes(item) && (
+              <>
+                <p className="cart-field">
+                  Check In:
+                  <input
+                    type="date"
+                    value={item.checkIn}
+                    onChange={(e) =>
+                      dispatch(
+                        updateCartItem({
+                          id: item.id,
+                          data: { checkIn: e.target.value },
+                        }),
+                      )
+                    }
+                    className="cart-input"
+                  />
                 </p>
-                <p className="cart-item-price">Price: ₹{item.price}</p>
 
-                {cartItems.includes(item) && (
-                  <>
-                    <p className="cart-field">
-                      Check In:{" "}
-                      <input
-                        type="date"
-                        value={item.checkIn}
-                        onChange={(e) =>
-                          dispatch(
-                            updateCartItem({
-                              id: item.id,
-                              data: { checkIn: e.target.value },
-                            })
-                          )
-                        }
-                        className="cart-input"
-                      />
-                    </p>
-                    <p className="cart-field">
-                      Check Out:{" "}
-                      <input
-                        type="date"
-                        value={item.checkOut}
-                        onChange={(e) =>
-                          dispatch(
-                            updateCartItem({
-                              id: item.id,
-                              data: { checkOut: e.target.value },
-                            })
-                          )
-                        }
-                        className="cart-input"
-                      />
-                    </p>
-                    <p className="cart-field">
-                      Guests:{" "}
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.guests}
-                        onChange={(e) =>
-                          dispatch(
-                            updateCartItem({
-                              id: item.id,
-                              data: { guests: Number(e.target.value) },
-                            })
-                          )
-                        }
-                        className="cart-input cart-input-number"
-                      />
-                    </p>
-                    <p className="cart-field">
-                      User Name:{" "}
-                      <input
-                        type="text"
-                        value={item.userName || user.name || ""}
-                        onChange={(e) =>
-                          dispatch(
-                            updateCartItem({
-                              id: item.id,
-                              data: { userName: e.target.value },
-                            })
-                          )
-                        }
-                        className="cart-input"
-                      />
-                    </p>
-                    <button
-                      onClick={() => dispatch(removeFromCart(item.id))}
-                      className="btn btn-remove"
-                    >
-                      Remove
-                    </button>
-                  </>
-                )}
+                <p className="cart-field">
+                  Check Out:
+                  <input
+                    type="date"
+                    value={item.checkOut}
+                    onChange={(e) =>
+                      dispatch(
+                        updateCartItem({
+                          id: item.id,
+                          data: { checkOut: e.target.value },
+                        }),
+                      )
+                    }
+                    className="cart-input"
+                  />
+                </p>
 
-                {approvedBookings.includes(item) && (
-                  <p className="approved-status">Status: Approved</p>
-                )}
-              </div>
-            ))}
+                <p className="cart-field">
+                  Guests:
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.guests}
+                    onChange={(e) =>
+                      dispatch(
+                        updateCartItem({
+                          id: item.id,
+                          data: { guests: Number(e.target.value) },
+                        }),
+                      )
+                    }
+                    className="cart-input cart-input-number"
+                  />
+                </p>
 
-            {[...cartItems, ...approvedBookings].length > 0 && (
-              <div style={{ marginTop: 12 }}>
-                <strong>Total: ₹{totalAmount}</strong>
-              </div>
+                <p className="cart-field">
+                  User Name:
+                  <input
+                    type="text"
+                    value={item.userName || user.name || ""}
+                    onChange={(e) =>
+                      dispatch(
+                        updateCartItem({
+                          id: item.id,
+                          data: { userName: e.target.value },
+                        }),
+                      )
+                    }
+                    className="cart-input"
+                  />
+                </p>
+
+                <button
+                  onClick={() => dispatch(removeFromCart(item.id))}
+                  className="btn btn-remove"
+                >
+                  Remove
+                </button>
+              </>
             )}
 
-            {cartItems.length > 0 && (
-              <button onClick={handleCheckout} className="btn btn-checkout">
-                Checkout All
-              </button>
+            {approvedBookings.includes(item) && (
+              <p className="approved-status">✅ Status: Approved</p>
             )}
           </div>
-        </>
-      )}
+        ))}
+
+        {[...cartItems, ...approvedBookings].length > 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <strong>Total: ₹{totalAmount}</strong>
+          </div>
+        )}
+
+        {cartItems.length > 0 && (
+          <button onClick={handleCheckout} className="btn btn-checkout">
+            Checkout All
+          </button>
+        )}
+      </div>
     </>
   );
 }
