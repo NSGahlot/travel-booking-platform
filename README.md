@@ -27,11 +27,7 @@ A full-stack inspired Travel Booking Platform built with React, Redux Toolkit, F
 
 ## 🚀 Live Demo
 
-https://your-vercel-link.vercel.app
-
-## 📷 Screenshots
-
-(Add screenshots here)
+https://travel-booking-platform-v96n.vercel.app/
 
 ## ⚙️ Installation
 
