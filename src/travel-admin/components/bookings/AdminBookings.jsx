@@ -34,7 +34,7 @@ function AdminBookings() {
         status: newStatus,
       });
       setBookings((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b)),
       );
     } catch (err) {
       console.error("Error updating status:", err);
@@ -95,8 +95,10 @@ function AdminBookings() {
                     b.status === "Approved"
                       ? "status-approved"
                       : b.status === "Rejected"
-                      ? "status-rejected"
-                      : "status-pending"
+                        ? "status-rejected"
+                        : b.status === "Cancelled"
+                          ? "status-cancelled"
+                          : "status-pending"
                   }
                 >
                   {b.status}

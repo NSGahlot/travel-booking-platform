@@ -62,6 +62,11 @@
     font-weight: bold;
 }
 
+.status-cancelled {
+    color: #dc2626;
+    font-weight: bold;
+}
+
 .btn {
     padding: 4px 8px;
     margin-right: 5px;

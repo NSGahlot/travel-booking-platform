@@ -15,6 +15,7 @@ import UserListings from "./travel-user/components/listings/UserListings";
 import UserBookings from "./travel-user/components/booking/UserBookings";
 import UserProtectedRoute from "./travel-user/components/auth/ProtectedRoute";
 import UserCart from "./travel-user/components/cart/UserCart";
+import UserWishlist from "./travel-user/components/wishlist/UserWishlist";
 
 function App() {
   return (
@@ -95,6 +96,15 @@ function App() {
           element={
             <UserProtectedRoute>
               <UserCart />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/wishlist"
+          element={
+            <UserProtectedRoute>
+              <UserWishlist />
             </UserProtectedRoute>
           }
         />

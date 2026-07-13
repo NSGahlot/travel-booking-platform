@@ -33,6 +33,24 @@ function UserBookings() {
     }
   }, [user.email]);
 
+  const cancelBooking = async (id) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this booking?",
+    );
+
+    if (!confirmCancel) return;
+
+    try {
+      await axios.patch(`${DB_URL}/bookings/${id}.json`, {
+        status: "Cancelled",
+      });
+
+      getUserBookings();
+    } catch (err) {
+      console.error("Error cancelling booking:", err);
+    }
+  };
+
   useEffect(() => {
     getUserBookings();
   }, [getUserBookings]);
@@ -42,7 +60,9 @@ function UserBookings() {
       ? "status-approved"
       : status === "Rejected"
         ? "status-rejected"
-        : "status-pending";
+        : status === "Cancelled"
+          ? "status-cancelled"
+          : "status-pending";
 
   return (
     <div className="user-bookings-container">
@@ -59,6 +79,8 @@ function UserBookings() {
       <table className="user-bookings-table">
         <thead className="user-bookings-thead">
           <tr>
+            <th>Status</th>
+            <th>Action</th>
             <th>Listing</th>
             <th>Price</th>
             <th>Check In</th>
@@ -83,6 +105,18 @@ function UserBookings() {
                 <td>{b.checkOut}</td>
                 <td>{b.guests}</td>
                 <td className={statusClass(b.status)}>{b.status}</td>
+                <td>
+                  {b.status === "Pending" ? (
+                    <button
+                      className="cancel-booking-btn"
+                      onClick={() => cancelBooking(b.id)}
+                    >
+                      Cancel
+                    </button>
+                  ) : (
+                    "-"
+                  )}
+                </td>
               </tr>
             ))
           )}

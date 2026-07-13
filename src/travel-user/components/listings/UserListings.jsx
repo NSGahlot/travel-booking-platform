@@ -5,6 +5,8 @@ import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import UserNav from "../UserNav";
 import "./UserListings.css";
+import { useDispatch } from "react-redux";
+import { toggleWishlist } from "../../../features/user/wishlistSlice";
 
 const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 const FIXED_IMAGE_URL =
@@ -13,6 +15,9 @@ const FIXED_IMAGE_URL =
 function UserListings() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
+
+  const wishlist = useSelector((state) => state.wishlist.items);
 
   const destination = searchParams.get("destination") || "";
   // const guests = Number(searchParams.get("guests")) || 1;
@@ -243,6 +248,12 @@ function UserListings() {
               ) : (
                 filteredListings.map((l) => (
                   <div key={l.id} className="listing-card">
+                    <button
+                      className="wishlist-btn"
+                      onClick={() => dispatch(toggleWishlist(l))}
+                    >
+                      {wishlist.some((item) => item.id === l.id) ? "❤️" : "🤍"}
+                    </button>
                     <h3 className="listing-name">{l.name}</h3>
                     <p>
                       <strong>Category:</strong> {l.category}

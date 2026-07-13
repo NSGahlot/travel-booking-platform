@@ -39,6 +39,14 @@ function UserNav() {
           🧭 Listings
         </NavLink>
         <NavLink
+          to="/user/wishlist"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
+          ❤️ Wishlist
+        </NavLink>
+        <NavLink
           to="/user/bookings"
           className={({ isActive }) =>
             isActive ? "nav-link active" : "nav-link"

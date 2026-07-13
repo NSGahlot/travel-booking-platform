@@ -106,3 +106,22 @@
     color: #f59e0b;
     font-weight: 800;
 }
+
+.status-cancelled {
+    color: #dc2626;
+    font-weight: 800;
+}
+
+.cancel-booking-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cancel-booking-btn:hover {
+    background: #dc2626;
+}
