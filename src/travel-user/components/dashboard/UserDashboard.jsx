@@ -63,6 +63,11 @@ function UserDashboard() {
             id,
             ...value,
           }));
+          console.log("Listings:", loaded);
+          console.log(
+            "Listing Names:",
+            loaded.map((l) => l.name),
+          );
           setListings(loaded);
         } else {
           setListings([]);
@@ -124,6 +129,8 @@ function UserDashboard() {
     navigate(`/user/listings?${params.toString()}`);
   };
 
+  console.log("Recommended:", recommendedListings);
+
   return (
     <>
       <UserNav />
@@ -151,19 +158,6 @@ function UserDashboard() {
               >
                 📘 View Bookings
               </button>
-            </div>
-          </div>
-          <div className="udb-hero-card">
-            <div className="udb-hero-stat">
-              <span className="udb-hero-stat-label">Total Bookings</span>
-              <strong>{bookings.length}</strong>
-            </div>
-            <div className="udb-hero-stat">
-              <span className="udb-hero-stat-label">Approved</span>
-              <strong>{approvedCount}</strong>
-            </div>
-            <div className="udb-hero-tip">
-              Tip: Book early to unlock better deals.
             </div>
           </div>
         </section>

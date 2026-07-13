@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 import "./UserBookings.css";
 import UserNav from "../UserNav";
 
@@ -34,20 +36,29 @@ function UserBookings() {
   }, [user.email]);
 
   const cancelBooking = async (id) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this booking?",
-    );
+    const result = await Swal.fire({
+      title: "Cancel Booking?",
+      text: "Are you sure you want to cancel this booking?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Cancel",
+      cancelButtonText: "Keep Booking",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#0ea5e9",
+    });
 
-    if (!confirmCancel) return;
+    if (!result.isConfirmed) return;
 
     try {
       await axios.patch(`${DB_URL}/bookings/${id}.json`, {
         status: "Cancelled",
       });
 
+      toast.success("Booking cancelled successfully.");
       getUserBookings();
     } catch (err) {
       console.error("Error cancelling booking:", err);
+      toast.error("Failed to cancel booking.");
     }
   };
 

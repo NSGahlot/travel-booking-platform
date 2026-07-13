@@ -7,6 +7,7 @@ import UserNav from "../UserNav";
 import "./UserListings.css";
 import { useDispatch } from "react-redux";
 import { toggleWishlist } from "../../../features/user/wishlistSlice";
+import toast from "react-hot-toast";
 
 const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 const FIXED_IMAGE_URL =
@@ -42,6 +43,7 @@ function UserListings() {
     address: "",
   });
 
+  const today = new Date().toISOString().split("T")[0];
   const categories = ["All", ...adminCategories];
   const authQuery = userToken ? `?auth=${userToken}` : "";
 
@@ -138,12 +140,20 @@ function UserListings() {
   };
 
   const handleBooking = async () => {
-    console.log("Current User :", user);
-    console.log("User EMail :", user.email);
     const { name, checkIn, checkOut, guests, address } = bookingDetails;
 
     if (!name || !checkIn || !checkOut || !address) {
-      alert("Please fill in all booking details including your name.");
+      toast.error("Please fill in all booking details including your name.");
+      return;
+    }
+
+    if (checkIn < today) {
+      toast.error("Check-In date cannot be in the past.");
+      return;
+    }
+
+    if (checkOut <= checkIn) {
+      toast.error("Check-Out date must be after Check-In date.");
       return;
     }
 
@@ -162,7 +172,9 @@ function UserListings() {
 
     try {
       await axios.post(`${DB_URL}/bookings.json${authQuery}`, newBooking);
-      alert("Booking request sent successfully! Waiting for admin approval.");
+      toast.success(
+        "Booking request sent successfully! Waiting for admin approval.",
+      );
       setModalOpen(false);
       setBookingDetails({
         name: "",
@@ -318,6 +330,7 @@ function UserListings() {
               Check-in:
               <input
                 type="date"
+                min={today}
                 value={bookingDetails.checkIn}
                 onChange={(e) =>
                   setBookingDetails({
@@ -333,6 +346,7 @@ function UserListings() {
               Check-out:
               <input
                 type="date"
+                min={bookingDetails.checkIn || today}
                 value={bookingDetails.checkOut}
                 onChange={(e) =>
                   setBookingDetails({

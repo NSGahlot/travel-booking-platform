@@ -1,6 +1,7 @@
 // src/travel-user/components/bookings/BookingForm.jsx
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import "./BookingForm.css";
 
@@ -16,7 +17,12 @@ function BookingForm({ listing }) {
 
   const handleBookNow = async () => {
     if (!formData.checkIn || !formData.checkOut) {
-      alert("Please select both Check-In and Check-Out dates.");
+      toast.error("Please select both Check-In and Check-Out dates.");
+      return;
+    }
+
+    if (formData.checkOut <= formData.checkIn) {
+      toast.error("Check-Out date must be after Check-In date.");
       return;
     }
 
@@ -40,10 +46,13 @@ function BookingForm({ listing }) {
       };
 
       await axios.post(`${DB_URL}/bookings.json`, newBooking);
-      alert("Booking request sent successfully!");
+      toast.success(
+        "Booking request sent successfully! Waiting for admin approval.",
+      );
       setFormData({ checkIn: "", checkOut: "", guests: 1 });
     } catch (error) {
       console.error("Error booking:", error);
+      toast.error("Booking failed. Please try again.");
     }
   };
 
@@ -57,6 +66,7 @@ function BookingForm({ listing }) {
       />
       <input
         type="date"
+        min={formData.checkIn}
         value={formData.checkOut}
         onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
         className="booking-input"

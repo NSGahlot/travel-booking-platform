@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import ChooseRole from "./components/ChooseRole";
 
 import AdminAuth from "./travel-admin/components/auth/AdminAuth";
@@ -20,6 +21,7 @@ import UserWishlist from "./travel-user/components/wishlist/UserWishlist";
 function App() {
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<ChooseRole />} />
 
