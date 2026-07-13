@@ -1,14 +1,24 @@
 .user-login-card {
     text-align: center;
-    padding: 18px 8px 6px;
+    padding: 12px 6px 6px;
     box-sizing: border-box;
 }
 
 .user-login-title {
-    color: #1e88e5;
-    margin-bottom: 16px;
+    color: var(--primary);
+    margin-bottom: 10px;
     font-size: 1.6rem;
     font-weight: 800;
+}
+
+.user-login-title::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
 }
 
 .user-login-form {
@@ -20,39 +30,46 @@
 
 .user-login-label {
     font-size: 0.9rem;
-    color: #444;
+    color: var(--muted);
+}
+
+.user-login-label {
+    font-weight: 600;
 }
 
 .user-login-input {
     width: 100%;
     padding: 12px 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 10px;
     font-size: 0.95rem;
     box-sizing: border-box;
     outline: none;
+    background: #f8fafc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .user-login-input:focus {
-    border-color: #1e88e5;
-    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
 }
 
 .user-login-btn {
     margin-top: 10px;
     padding: 12px;
-    background: linear-gradient(135deg, #1e88e5, #4f9cff);
+    background: linear-gradient(135deg, var(--primary), #38bdf8);
     color: #fff;
     border: none;
     border-radius: 999px;
     cursor: pointer;
     font-weight: 700;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 22px rgba(14, 165, 233, 0.25);
 }
 
 .user-login-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 22px rgba(30, 136, 229, 0.25);
+    box-shadow: 0 14px 28px rgba(14, 165, 233, 0.28);
 }
 
 .user-login-btn:hover {
@@ -60,8 +77,8 @@
 }
 
 .user-login-error {
-    color: #c62828;
-    background: #ffebee;
+    color: #b91c1c;
+    background: #fee2e2;
     padding: 8px;
     border-radius: 6px;
     margin-top: 10px;

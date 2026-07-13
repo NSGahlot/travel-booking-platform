@@ -1,27 +1,36 @@
 .admin-bookings-container {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 40px auto;
+    padding: 0 20px 40px;
 }
 
 .admin-bookings-title {
     text-align: center;
+    color: var(--primary);
+    font-weight: 800;
+    margin-bottom: 18px;
 }
 
 .admin-bookings-table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    backdrop-filter: none;
 }
 
 .admin-bookings-thead {
-    background: #1976d2;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: #fff;
 }
 
 .admin-bookings-table th,
 .admin-bookings-table td {
-    padding: 8px;
-    border: 1px solid #ddd;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
 }
 
 .no-bookings-cell {
@@ -31,20 +40,25 @@
 
 .admin-bookings-row {
     text-align: center;
+    transition: background 0.2s ease;
+}
+
+.admin-bookings-row:hover {
+    background: #f8fafc;
 }
 
 .status-approved {
-    color: green;
+    color: var(--primary-2);
     font-weight: bold;
 }
 
 .status-rejected {
-    color: red;
+    color: #e11d48;
     font-weight: bold;
 }
 
 .status-pending {
-    color: orange;
+    color: #f59e0b;
     font-weight: bold;
 }
 
@@ -53,14 +67,21 @@
     margin-right: 5px;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
+    font-weight: 700;
 }
 
 .btn-approve {
-    background: green;
+    background: linear-gradient(135deg, var(--primary-2), var(--primary));
 }
 
 .btn-reject {
-    background: red;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+}
+
+@media (max-width: 768px) {
+    .admin-bookings-container {
+        overflow-x: auto;
+    }
 }

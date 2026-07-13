@@ -1,15 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import "./AdminBookings.css";
 
 const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function AdminBookings() {
+  const adminToken = useSelector((state) => state.admin.token);
   const [bookings, setBookings] = useState([]);
+  const authQuery = adminToken ? `?auth=${adminToken}` : "";
 
   const fetchBookings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/bookings.json`);
+      const res = await axios.get(`${DB_URL}/bookings.json${authQuery}`);
       if (res.data) {
         const allBookings = Object.entries(res.data).map(([id, value]) => ({
           id,
@@ -23,11 +26,13 @@ function AdminBookings() {
       console.error("Error fetching bookings:", err);
       setBookings([]);
     }
-  }, []);
+  }, [authQuery]);
 
   const updateStatus = async (id, newStatus) => {
     try {
-      await axios.patch(`${DB_URL}/bookings/${id}.json`, { status: newStatus });
+      await axios.patch(`${DB_URL}/bookings/${id}.json${authQuery}`, {
+        status: newStatus,
+      });
       setBookings((prev) =>
         prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
       );

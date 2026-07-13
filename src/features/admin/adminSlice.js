@@ -1,8 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const isLikelyJwt = (token) =>
+  typeof token === "string" && token.split(".").length === 3;
+
+const storedAdminToken = localStorage.getItem("adminToken");
+const initialToken = isLikelyJwt(storedAdminToken) ? storedAdminToken : null;
+
+if (!initialToken && storedAdminToken) {
+  localStorage.removeItem("adminToken");
+}
+
 const initialState = {
   email: null,
-  token: localStorage.getItem("adminToken") || null,
+  token: initialToken,
   categories: [],
 };
 

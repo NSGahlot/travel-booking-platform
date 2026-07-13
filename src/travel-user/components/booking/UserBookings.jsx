@@ -8,11 +8,13 @@ const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 
 function UserBookings() {
   const user = useSelector((state) => state.user);
+  const userToken = useSelector((state) => state.user.token);
   const [bookings, setBookings] = useState([]);
+  const authQuery = userToken ? `?auth=${userToken}` : "";
 
   const getUserBookings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/bookings.json`);
+      const res = await axios.get(`${DB_URL}/bookings.json${authQuery}`);
       if (res.data) {
         const allBookings = Object.entries(res.data).map(([id, value]) => ({
           id,
@@ -31,7 +33,7 @@ function UserBookings() {
       console.error("Error fetching bookings:", err);
       setBookings([]);
     }
-  }, [user.email]);
+  }, [user.email, authQuery]);
 
   useEffect(() => {
     getUserBookings();
@@ -49,7 +51,15 @@ function UserBookings() {
   return (
     <div className="user-bookings-container">
       <UserNav />
-      <h2 className="user-bookings-title">My Bookings</h2>
+      <section className="ub-hero">
+        <div className="ub-hero-content">
+          <p className="ub-hero-badge">📌 Booking Center</p>
+          <h2 className="user-bookings-title">My Bookings</h2>
+          <p className="ub-hero-subtitle">
+            Track approvals, dates, and your upcoming plans at a glance.
+          </p>
+        </div>
+      </section>
       <table className="user-bookings-table">
         <thead className="user-bookings-thead">
           <tr>

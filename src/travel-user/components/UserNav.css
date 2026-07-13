@@ -3,13 +3,13 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: linear-gradient(135deg, #1e88e5, #3f51b5);
+    background: linear-gradient(135deg, var(--primary), #38bdf8);
     color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 14px 36px;
-    box-shadow: 0 10px 24px rgba(30, 136, 229, 0.25);
+    box-shadow: var(--shadow);
     backdrop-filter: blur(6px);
 }
 
@@ -39,6 +39,9 @@
     padding: 6px 10px;
     border-radius: 999px;
     transition: background 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .user-nav-links span:hover {
@@ -62,7 +65,7 @@
 
 .logout-btn {
     background: #fff;
-    color: #1e88e5;
+    color: var(--primary);
     border: none;
     padding: 8px 16px;
     border-radius: 999px;
@@ -103,7 +106,7 @@
     height: 18px;
     padding: 0 6px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #ff5252, #ff7b7b);
+    background: linear-gradient(135deg, #f97316, #f43f5e);
     color: #fff;
     font-size: 12px;
     font-weight: 800;

@@ -5,7 +5,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
+    background: radial-gradient(900px 500px at 50% -10%, #e0f2fe 0%, #f7f9fc 55%, #ffffff 100%);
     text-align: center;
     padding: 20px;
 }
@@ -13,7 +13,7 @@
 .choose-role-title {
     font-size: 2rem;
     font-weight: 700;
-    color: #1e88e5;
+    color: var(--primary);
     margin-bottom: 40px;
     letter-spacing: 0.5px;
 }
@@ -34,9 +34,9 @@
     font-weight: 600;
     color: #fff;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius);
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow);
     transition: all 0.25s ease;
 }
 
@@ -47,11 +47,11 @@
 
 /* ---------- Variants ---------- */
 .admin-btn {
-    background: linear-gradient(135deg, #1e88e5, #42a5f5);
+    background: linear-gradient(135deg, var(--primary), #38bdf8);
 }
 
 .user-btn {
-    background: linear-gradient(135deg, #43a047, #66bb6a);
+    background: linear-gradient(135deg, var(--primary-2), #86efac);
 }
 
 /* ---------- Active / Focus States ---------- */

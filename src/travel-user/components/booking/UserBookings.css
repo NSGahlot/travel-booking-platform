@@ -4,33 +4,78 @@
     padding: 0 20px 40px;
 }
 
+.user-bookings-container {
+    background: transparent;
+}
+
+.user-bookings-table {
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .user-bookings-container {
+        overflow-x: auto;
+    }
+}
+
 .user-bookings-title {
     text-align: center;
     font-size: 2rem;
-    color: #1e88e5;
+    color: var(--primary);
     font-weight: 800;
     margin-bottom: 18px;
+}
+
+/* ---------- Hero ---------- */
+.ub-hero {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    text-align: center;
+    backdrop-filter: none;
+}
+
+.ub-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: #e0f2fe;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin: 0 0 10px;
+}
+
+.ub-hero-subtitle {
+    margin: 0;
+    color: var(--muted);
 }
 
 .user-bookings-table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid #e5e7eb;
-    background: #fff;
+    border: 1px solid var(--border);
+    background: var(--card);
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 10px 24px rgba(30, 136, 229, 0.12);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    backdrop-filter: none;
 }
 
 .user-bookings-thead {
-    background: linear-gradient(135deg, #1e88e5, #4f9cff);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: #fff;
 }
 
 .user-bookings-table th,
 .user-bookings-table td {
     padding: 12px 14px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border);
 }
 
 .no-bookings-cell {
@@ -48,16 +93,16 @@
 }
 
 .status-approved {
-    color: #2e7d32;
+    color: var(--primary-2);
     font-weight: 800;
 }
 
 .status-rejected {
-    color: #c62828;
+    color: #e11d48;
     font-weight: 800;
 }
 
 .status-pending {
-    color: #f57c00;
+    color: #f59e0b;
     font-weight: 800;
 }

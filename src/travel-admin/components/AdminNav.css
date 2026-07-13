@@ -1,22 +1,29 @@
 .admin-nav {
-    background-color: #1e88e5;
+    background: linear-gradient(135deg, var(--primary), #38bdf8);
     color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 14px 36px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .admin-logo {
     font-weight: bold;
     font-size: 1.4rem;
     cursor: pointer;
+    letter-spacing: 0.2px;
 }
 
 .admin-links {
     display: flex;
-    gap: 15px;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 14px;
+    border-radius: 999px;
 }
 
 .admin-links span {
@@ -24,6 +31,14 @@
     text-decoration: none;
     font-weight: 500;
     cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 999px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.admin-links span:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateY(-1px);
 }
 
 .admin-right {
@@ -34,14 +49,36 @@
 .admin-email {
     margin-right: 15px;
     font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 10px;
+    border-radius: 999px;
 }
 
 .logout-btn {
     background: #fff;
-    color: #1e88e5;
+    color: var(--primary);
     border: none;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 900px) {
+    .admin-nav {
+        padding: 12px 18px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .admin-links {
+        width: 100%;
+        justify-content: center;
+    }
 }

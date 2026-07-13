@@ -18,6 +18,7 @@ function AdminListings() {
   const dispatch = useDispatch();
   const listings = useSelector((state) => state.listings.listings || []);
   const categories = useSelector((state) => state.categories.categories || []);
+  const adminToken = useSelector((state) => state.admin.token);
 
   const [newListing, setNewListing] = useState({
     name: "",
@@ -30,9 +31,11 @@ function AdminListings() {
   });
   const [editingId, setEditingId] = useState(null);
 
+  const authQuery = adminToken ? `?auth=${adminToken}` : "";
+
   const fetchListings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/listings.json`);
+      const res = await axios.get(`${DB_URL}/listings.json${authQuery}`);
       if (res.data) {
         const loaded = Object.entries(res.data).map(([id, value]) => ({
           id,
@@ -43,7 +46,7 @@ function AdminListings() {
     } catch (err) {
       console.error("Error fetching listings:", err);
     }
-  }, [dispatch]);
+  }, [dispatch, authQuery]);
 
   useEffect(() => {
     fetchListings();
@@ -66,12 +69,19 @@ function AdminListings() {
 
     try {
       if (editingId) {
-        await axios.put(`${DB_URL}/listings/${editingId}.json`, newListing);
+        await axios.put(
+          `${DB_URL}/listings/${editingId}.json${authQuery}`,
+          newListing
+        );
         dispatch(updateListing({ id: editingId, ...newListing }));
         setEditingId(null);
       } else {
-        const res = await axios.post(`${DB_URL}/listings.json`, newListing);
-        dispatch(addListing({ id: res.data.name, ...newListing }));
+        const payload = { ...newListing, createdAt: Date.now() };
+        const res = await axios.post(
+          `${DB_URL}/listings.json${authQuery}`,
+          payload
+        );
+        dispatch(addListing({ id: res.data.name, ...payload }));
       }
 
       setNewListing({
@@ -85,17 +95,20 @@ function AdminListings() {
       });
     } catch (err) {
       console.error("Error saving listing:", err);
+      alert("Failed to save listing. Check console for details.");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${DB_URL}/listings/${id}.json`);
+      await axios.delete(`${DB_URL}/listings/${id}.json${authQuery}`);
       dispatch(deleteListing(id));
     } catch (err) {
       console.error("Error deleting listing:", err);
+      alert("Failed to delete listing. Check console for details.");
     }
   };
+
 
   const handleEdit = (listing) => {
     setEditingId(listing.id);
@@ -105,7 +118,6 @@ function AdminListings() {
   return (
     <div className="admin-listings-container">
       <h2 className="admin-title">Admin Listings</h2>
-
       {/* Add/Edit Form */}
       <div className="form-card">
         <input
@@ -219,7 +231,7 @@ function AdminListings() {
                       available: e.target.checked,
                     };
                     await axios.put(
-                      `${DB_URL}/listings/${l.id}.json`,
+                      `${DB_URL}/listings/${l.id}.json${authQuery}`,
                       updatedListing
                     );
                     dispatch(updateListing(updatedListing));

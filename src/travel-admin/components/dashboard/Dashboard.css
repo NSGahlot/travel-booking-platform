@@ -1,11 +1,19 @@
 .dashboard-container {
-    width: 600px;
-    margin: 50px auto;
+    max-width: 720px;
+    margin: 60px auto;
     text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    backdrop-filter: none;
 }
 
 .dashboard-title {
     margin: 0 0 6px;
+    color: var(--primary);
+    font-weight: 800;
 }
 
 .dashboard-subtitle {
@@ -14,35 +22,40 @@
 
 .dashboard-links {
     margin-top: 30px;
+    display: grid;
+    gap: 12px;
 }
 
 .dashboard-link {
     text-decoration: none;
     color: #fff;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 999px;
     margin: 5px;
     display: inline-block;
+    font-weight: 700;
+    box-shadow: var(--shadow);
 }
 
 .dashboard-link.green {
-    background: #4caf50;
+    background: linear-gradient(135deg, var(--primary-2), var(--primary));
 }
 
 .dashboard-link.blue {
-    background: #2196f3;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
 }
 
 .dashboard-link.orange {
-    background: #ff9800;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
 }
 
 .logout-btn.red {
-    background: #f44336;
+    background: linear-gradient(135deg, #f97316, #ef4444);
     color: #fff;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 999px;
     cursor: pointer;
     margin-top: 20px;
+    font-weight: 700;
 }

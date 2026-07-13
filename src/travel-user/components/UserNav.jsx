@@ -26,9 +26,9 @@ function UserNav() {
       </div>
 
       <div className="user-nav-links">
-        <span onClick={() => navigate("/user/home")}>Home</span>
-        <span onClick={() => navigate("/user/listings")}>Listings</span>
-        <span onClick={() => navigate("/user/bookings")}>Bookings</span>
+        <span onClick={() => navigate("/user/home")}>🏠 Home</span>
+        <span onClick={() => navigate("/user/listings")}>🧭 Listings</span>
+        <span onClick={() => navigate("/user/bookings")}>📘 Bookings</span>
 
         <button type="button" className="nav-cart-btn" onClick={toggleCart}>
           🛒 Cart

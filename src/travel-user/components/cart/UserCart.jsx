@@ -15,8 +15,10 @@ function UserCart() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const user = useSelector((state) => state.user);
+  const userToken = useSelector((state) => state.user.token);
   const [approvedBookings, setApprovedBookings] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const authQuery = userToken ? `?auth=${userToken}` : "";
 
   useEffect(() => {
     const toggle = () => setIsOpen((v) => !v);
@@ -26,21 +28,23 @@ function UserCart() {
 
   const fetchApprovedBookings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/bookings.json`);
+      const res = await axios.get(`${DB_URL}/bookings.json${authQuery}`);
       if (res.data) {
         const allBookings = Object.entries(res.data).map(([id, value]) => ({
           id,
           ...value,
         }));
         const approved = allBookings.filter(
-          (b) => b.status === "Approved" && b.userId === user.id
+          (b) =>
+            b.status === "Approved" &&
+            (b.userEmail ? b.userEmail === user.email : true)
         );
         setApprovedBookings(approved);
       }
     } catch (err) {
       console.error(err);
     }
-  }, [user.id]);
+  }, [user.email, authQuery]);
 
   useEffect(() => {
     fetchApprovedBookings();

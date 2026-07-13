@@ -1,5 +1,5 @@
 // src/travel-user/components/UserListings.jsx
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,8 @@ const FIXED_IMAGE_URL =
 
 function UserListings() {
   const navigate = useNavigate();
+  const userToken = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user);
   const adminCategories = useSelector(
     (state) => state.categories.categories || []
   );
@@ -21,6 +23,8 @@ function UserListings() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [modalOpen, setModalOpen] = useState(false);
   const [currentListing, setCurrentListing] = useState(null);
+  const [sortBy, setSortBy] = useState("newest");
+  const [maxPrice, setMaxPrice] = useState(10000);
   const [bookingDetails, setBookingDetails] = useState({
     name: "",
     checkIn: "",
@@ -30,10 +34,11 @@ function UserListings() {
   });
 
   const categories = ["All", ...adminCategories];
+  const authQuery = userToken ? `?auth=${userToken}` : "";
 
   const fetchListings = useCallback(async () => {
     try {
-      const res = await axios.get(`${DB_URL}/listings.json`);
+      const res = await axios.get(`${DB_URL}/listings.json${authQuery}`);
       if (res.data) {
         const loaded = Object.entries(res.data).map(([id, value]) => ({
           id,
@@ -44,13 +49,25 @@ function UserListings() {
     } catch (err) {
       console.error("Error fetching listings:", err);
     }
-  }, []);
+  }, [authQuery]);
 
   useEffect(() => {
     fetchListings();
     const interval = setInterval(fetchListings, 5000);
     return () => clearInterval(interval);
   }, [fetchListings]);
+
+  const maxListingPrice = useMemo(() => {
+    if (listings.length === 0) return 10000;
+    return Math.max(
+      10000,
+      ...listings.map((l) => Number(l.price || 0))
+    );
+  }, [listings]);
+
+  useEffect(() => {
+    setMaxPrice((prev) => Math.min(prev, maxListingPrice));
+  }, [maxListingPrice]);
 
   useEffect(() => {
     let filtered = listings.filter(
@@ -68,8 +85,39 @@ function UserListings() {
       );
     }
 
+    const minPrice = 0;
+    const maxPriceValue = Number.isFinite(Number(maxPrice))
+      ? Number(maxPrice)
+      : Infinity;
+
+    filtered = filtered.filter((l) => {
+      const price = Number(l.price || 0);
+      return price >= minPrice && price <= maxPriceValue;
+    });
+
+    if (sortBy === "price-asc") {
+      filtered = [...filtered].sort(
+        (a, b) => Number(a.price || 0) - Number(b.price || 0)
+      );
+    } else if (sortBy === "price-desc") {
+      filtered = [...filtered].sort(
+        (a, b) => Number(b.price || 0) - Number(a.price || 0)
+      );
+    } else if (sortBy === "newest") {
+      filtered = [...filtered].sort((a, b) => {
+        const aDate = new Date(a.createdAt || 0).getTime();
+        const bDate = new Date(b.createdAt || 0).getTime();
+        return bDate - aDate;
+      });
+    }
+
     setFilteredListings(filtered);
-  }, [listings, selectedCategory]);
+  }, [
+    listings,
+    selectedCategory,
+    maxPrice,
+    sortBy,
+  ]);
 
   const openModal = (listing) => {
     setCurrentListing(listing);
@@ -93,6 +141,7 @@ function UserListings() {
 
     const newBooking = {
       userName: name,
+      userEmail: user.email || "",
       listingName: currentListing.name,
       listingId: currentListing.id,
       price: currentListing.price,
@@ -104,7 +153,7 @@ function UserListings() {
     };
 
     try {
-      await axios.post(`${DB_URL}/bookings.json`, newBooking);
+      await axios.post(`${DB_URL}/bookings.json${authQuery}`, newBooking);
       alert("Booking request sent successfully! Waiting for admin approval.");
       setModalOpen(false);
       setBookingDetails({
@@ -124,56 +173,107 @@ function UserListings() {
     navigate("/user/listings");
   };
 
+  const handleMaxPriceChange = (value) => {
+    setMaxPrice(Number(value));
+  };
+
+
   return (
     <>
       <UserNav />
       <div className="user-listings-container">
-        <h2 className="listings-title">🏖 Available Listings</h2>
+        <section className="ul-hero">
+          <div className="ul-hero-content">
+            <p className="ul-hero-badge">🌍 Explore Stays</p>
+            <h2 className="listings-title">🏖 Available Listings</h2>
+            <p className="ul-hero-subtitle">
+              Handpicked destinations and stays to match your travel vibe.
+            </p>
+          </div>
+        </section>
 
-        <div className="category-filter">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => handleCategoryChange(cat)}
-              className={`category-btn ${
-                selectedCategory === cat ? "active" : ""
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        <div className="listings-grid">
-          {filteredListings.length === 0 ? (
-            <p className="no-listings">No listings found.</p>
-          ) : (
-            filteredListings.map((l) => (
-              <div key={l.id} className="listing-card">
-                <h3 className="listing-name">{l.name}</h3>
-                <p>
-                  <strong>Category:</strong> {l.category}
-                </p>
-                <p>
-                  <strong>Price:</strong> ₹{l.price}
-                </p>
-                <p>
-                  <strong>Address:</strong> {l.address}
-                </p>
-                <p>{l.description}</p>
-                <img
-                  src={
-                    l.image && l.image.trim() !== "" ? l.image : FIXED_IMAGE_URL
-                  }
-                  alt={l.name || "Listing Image"}
-                  className="listing-image"
-                />
-                <button onClick={() => openModal(l)} className="book-now-btn">
-                  Book Now
-                </button>
+        <div className="ul-layout">
+          <div className="ul-main">
+            <div className="ul-toolbar">
+              <div className="category-filter">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => handleCategoryChange(cat)}
+                    className={`category-btn ${
+                      selectedCategory === cat ? "active" : ""
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
-            ))
-          )}
+              <div className="ul-price-range">
+                <div className="range-label">
+                  Max Price: ₹{maxPrice}
+                </div>
+                <div className="range-inputs">
+                  <input
+                    type="range"
+                    min="0"
+                    max={maxListingPrice}
+                    value={maxPrice}
+                    onChange={(e) => handleMaxPriceChange(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="sort-box">
+                <label>
+                  Sort by
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="newest">Newest</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div className="listings-grid">
+              {filteredListings.length === 0 ? (
+                <p className="no-listings">No listings found.</p>
+              ) : (
+                filteredListings.map((l) => (
+                  <div key={l.id} className="listing-card">
+                    <h3 className="listing-name">{l.name}</h3>
+                    <p>
+                      <strong>Category:</strong> {l.category}
+                    </p>
+                    <p>
+                      <strong>Price:</strong> ₹{l.price}
+                    </p>
+                    <p>
+                      <strong>Address:</strong> {l.address}
+                    </p>
+                    <p>{l.description}</p>
+                    <img
+                      src={
+                        l.image && l.image.trim() !== ""
+                          ? l.image
+                          : FIXED_IMAGE_URL
+                      }
+                      alt={l.name || "Listing Image"}
+                      className="listing-image"
+                    />
+                    <button
+                      onClick={() => openModal(l)}
+                      className="book-now-btn"
+                    >
+                      Book Now
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
