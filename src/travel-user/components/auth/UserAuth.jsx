@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import UserLogin from "./UserLogin";
-import UserSignup from "./UserSignup";
+import UserSignup from "./UserSignUp";
 import "./UserAuth.css";
 
 function UserAuth() {
