@@ -4,7 +4,7 @@
     margin: 0 auto;
     padding: 96px 24px 56px;
     /* 👈 top 96px: fixed nav se bachne ke liye, sides 24px */
-    background: radial-gradient(1100px 520px at 50% -10%, #dff5f1 0%, #f5f7fb 45%, #ffffff 100%);
+    background: radial-gradient(ellipse 1100px 520px at 50% -10%, #dff5f1 0%, #f5f7fb 45%, #ffffff 100%);
     /* section background for separation */
     box-sizing: border-box;
 }
@@ -15,7 +15,7 @@
     margin: 0 0 20px;
     /* 👈 bottom gap under heading */
 }
-        background: radial-gradient(1100px 520px at 50% -10%, #e0f2fe 0%, #f7f9fc 55%, #ffffff 100%);
+
 /* ---------- FORM CARD: real card feel + consistent inner gaps ---------- */
 .form-card {
     background: var(--card);

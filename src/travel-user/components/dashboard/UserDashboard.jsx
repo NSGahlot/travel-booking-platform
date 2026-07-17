@@ -15,6 +15,8 @@ function UserDashboard() {
   const [bookings, setBookings] = useState([]);
   const [approvedCount, setApprovedCount] = useState(0);
   const [listings, setListings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const [searchForm, setSearchForm] = useState({
     destination: "",
     checkIn: "",
@@ -23,62 +25,65 @@ function UserDashboard() {
   });
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      setError("");
+
       try {
-        const res = await axios.get(`${DB_URL}/bookings.json`);
-        if (res.data) {
-          const allBookings = Object.values(res.data);
+        const [bookingsRes, listingsRes] = await Promise.all([
+          axios.get(`${DB_URL}/bookings.json`),
+          axios.get(`${DB_URL}/listings.json`),
+        ]);
+
+        if (bookingsRes.data) {
+          const allBookings = Object.values(bookingsRes.data);
 
           if (!user.email) {
             setBookings([]);
             setApprovedCount(0);
-            return;
+          } else {
+            const userBookings = allBookings.filter(
+              (b) => b.userEmail === user.email,
+            );
+
+            setBookings(userBookings);
+
+            const approved = userBookings.filter(
+              (b) => b.status === "Approved",
+            ).length;
+
+            setApprovedCount(approved);
           }
-
-          const userBookings = allBookings.filter(
-            (b) => b.userEmail === user.email,
-          );
-
-          setBookings(userBookings);
-
-          const approved = userBookings.filter(
-            (b) => b.status === "Approved",
-          ).length;
-
-          setApprovedCount(approved);
         } else {
           setBookings([]);
           setApprovedCount(0);
         }
-      } catch (err) {
-        console.error("Error fetching bookings:", err);
-      }
-    };
 
-    const fetchListings = async () => {
-      try {
-        const res = await axios.get(`${DB_URL}/listings.json`);
-        if (res.data) {
-          const loaded = Object.entries(res.data).map(([id, value]) => ({
-            id,
-            ...value,
-          }));
-          console.log("Listings:", loaded);
-          console.log(
-            "Listing Names:",
-            loaded.map((l) => l.name),
+        if (listingsRes.data) {
+          const loaded = Object.entries(listingsRes.data).map(
+            ([id, value]) => ({
+              id,
+              ...value,
+            }),
           );
           setListings(loaded);
         } else {
           setListings([]);
         }
       } catch (err) {
-        console.error("Error fetching listings:", err);
+        console.error("Error fetching dashboard data:", err);
+        setError(
+          "We couldn't load your dashboard right now. Please try again.",
+        );
+        setBookings([]);
+        setApprovedCount(0);
+        setListings([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchBookings();
-    fetchListings();
+    fetchDashboardData();
   }, [user.email]);
 
   const featuredListings = useMemo(
@@ -129,8 +134,6 @@ function UserDashboard() {
     navigate(`/user/listings?${params.toString()}`);
   };
 
-  console.log("Recommended:", recommendedListings);
-
   return (
     <>
       <UserNav />
@@ -165,7 +168,12 @@ function UserDashboard() {
         <section className="udb-search">
           <div className="udb-section-title">Find your next stay</div>
           <form className="udb-search-form" onSubmit={handleSearch}>
+            <label className="sr-only" htmlFor="search-destination">
+              Destination
+            </label>
             <input
+              id="search-destination"
+              name="destination"
               type="text"
               placeholder="Destination"
               value={searchForm.destination}
@@ -173,21 +181,36 @@ function UserDashboard() {
                 setSearchForm({ ...searchForm, destination: e.target.value })
               }
             />
+            <label className="sr-only" htmlFor="search-check-in">
+              Check-in date
+            </label>
             <input
+              id="search-check-in"
+              name="checkIn"
               type="date"
               value={searchForm.checkIn}
               onChange={(e) =>
                 setSearchForm({ ...searchForm, checkIn: e.target.value })
               }
             />
+            <label className="sr-only" htmlFor="search-check-out">
+              Check-out date
+            </label>
             <input
+              id="search-check-out"
+              name="checkOut"
               type="date"
               value={searchForm.checkOut}
               onChange={(e) =>
                 setSearchForm({ ...searchForm, checkOut: e.target.value })
               }
             />
+            <label className="sr-only" htmlFor="search-guests">
+              Guests
+            </label>
             <input
+              id="search-guests"
+              name="guests"
               type="number"
               min="1"
               value={searchForm.guests}
@@ -206,20 +229,90 @@ function UserDashboard() {
         </section>
 
         <div className="udb-section-title">Your Overview</div>
-        <div className="udb-stats-grid">
-          {quickStats.map((stat) => (
-            <div key={stat.id} className="udb-stat-card">
-              <h2
-                className={`udb-stat-value ${
-                  stat.label === "Approved Bookings" ? "approved" : "default"
-                }`}
+        {isLoading ? (
+          <p className="udb-empty">Loading your dashboard...</p>
+        ) : error ? (
+          <div className="udb-empty">
+            {error}
+            <div style={{ marginTop: "8px" }}>
+              <button
+                type="button"
+                className="udb-mini-btn"
+                onClick={() => {
+                  setIsLoading(true);
+                  setError("");
+                  const fetchDashboardData = async () => {
+                    try {
+                      const [bookingsRes, listingsRes] = await Promise.all([
+                        axios.get(`${DB_URL}/bookings.json`),
+                        axios.get(`${DB_URL}/listings.json`),
+                      ]);
+
+                      if (bookingsRes.data) {
+                        const allBookings = Object.values(bookingsRes.data);
+
+                        if (!user.email) {
+                          setBookings([]);
+                          setApprovedCount(0);
+                        } else {
+                          const userBookings = allBookings.filter(
+                            (b) => b.userEmail === user.email,
+                          );
+                          setBookings(userBookings);
+                          setApprovedCount(
+                            userBookings.filter((b) => b.status === "Approved")
+                              .length,
+                          );
+                        }
+                      } else {
+                        setBookings([]);
+                        setApprovedCount(0);
+                      }
+
+                      if (listingsRes.data) {
+                        const loaded = Object.entries(listingsRes.data).map(
+                          ([id, value]) => ({ id, ...value }),
+                        );
+                        setListings(loaded);
+                      } else {
+                        setListings([]);
+                      }
+                    } catch (err) {
+                      console.error("Error fetching dashboard data:", err);
+                      setError(
+                        "We couldn't load your dashboard right now. Please try again.",
+                      );
+                      setBookings([]);
+                      setApprovedCount(0);
+                      setListings([]);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  };
+
+                  fetchDashboardData();
+                }}
               >
-                {stat.value}
-              </h2>
-              <p className="udb-stat-label">{stat.label}</p>
+                Try again
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="udb-stats-grid">
+            {quickStats.map((stat) => (
+              <div key={stat.id} className="udb-stat-card">
+                <h2
+                  className={`udb-stat-value ${
+                    stat.label === "Approved Bookings" ? "approved" : "default"
+                  }`}
+                >
+                  {stat.value}
+                </h2>
+                <p className="udb-stat-label">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         <section className="udb-grid">
           <div className="udb-block">
@@ -259,6 +352,12 @@ function UserDashboard() {
                       <div className="udb-mini-title">{b.listingName}</div>
                       <div className="udb-mini-meta">
                         {b.checkIn || "-"} → {b.checkOut || "-"}
+                      </div>
+                      <div className="udb-mini-meta">
+                        {b.guests || 1} guest{(b.guests || 1) > 1 ? "s" : ""} •{" "}
+                        {b.totalNights || "—"} night
+                        {(b.totalNights || 0) === 1 ? "" : "s"} • ₹
+                        {b.totalPrice || b.price || 0}
                       </div>
                     </div>
                     <span

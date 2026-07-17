@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(800px 400px at 50% -10%, #e0f2fe 0%, #f7f9fc 55%, #ffffff 100%);
+    background: radial-gradient(ellipse 800px 400px at 50% -10%, #e0f2fe 0%, #f7f9fc 55%, #ffffff 100%);
     padding: 20px;
 }
 

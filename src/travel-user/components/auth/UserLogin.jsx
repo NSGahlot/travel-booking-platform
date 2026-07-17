@@ -41,24 +41,36 @@ function UserLogin() {
     <div className="user-login-card">
       <h2 className="user-login-title">User Login</h2>
       <form onSubmit={handleLogin} className="user-login-form">
-        <label className="user-login-label">Email</label>
+        <label className="user-login-label" htmlFor="user-login-email">
+          Email
+        </label>
         <input
+          id="user-login-email"
+          name="email"
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           className="user-login-input"
+          autoComplete="email"
+          aria-invalid={Boolean(error)}
         />
 
-        <label className="user-login-label">Password</label>
+        <label className="user-login-label" htmlFor="user-login-password">
+          Password
+        </label>
         <input
+          id="user-login-password"
+          name="password"
           type="password"
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className="user-login-input"
+          autoComplete="current-password"
+          aria-invalid={Boolean(error)}
         />
 
         <button type="submit" className="user-login-btn">
@@ -66,7 +78,11 @@ function UserLogin() {
         </button>
       </form>
 
-      {error && <p className="user-login-error">{error}</p>}
+      {error && (
+        <p className="user-login-error" role="alert" aria-live="polite">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

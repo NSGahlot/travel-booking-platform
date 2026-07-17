@@ -13,15 +13,17 @@ function AdminLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     if (!email || !password) {
-      toast.error("Enter email and password.");
+      toast.error("Please enter your email and password.");
       return;
     }
 
     // Sirf ye email allow hoga
     if (email !== "traveladmin@gmail.com") {
-      toast.error("You are not authorized as Admin.");
+      toast.error("This email is not authorized for admin access.");
       return;
     }
 
@@ -57,33 +59,39 @@ function AdminLogin() {
           </p>
         </div>
 
-        <div className="admin-login-form">
-          <label className="admin-login-label">
+        <form className="admin-login-form" onSubmit={handleLogin}>
+          <label className="admin-login-label" htmlFor="admin-email">
             Email
-            <input
-              type="email"
-              className="admin-login-input"
-              placeholder="admin@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
           </label>
+          <input
+            id="admin-email"
+            name="email"
+            type="email"
+            className="admin-login-input"
+            placeholder="admin@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
 
-          <label className="admin-login-label">
+          <label className="admin-login-label" htmlFor="admin-password">
             Password
-            <input
-              type="password"
-              className="admin-login-input"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
           </label>
+          <input
+            id="admin-password"
+            name="password"
+            type="password"
+            className="admin-login-input"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
 
-          <button className="admin-login-btn" onClick={handleLogin}>
+          <button type="submit" className="admin-login-btn">
             Login
           </button>
-        </div>
+        </form>
 
         <p className="admin-login-hint">
           Tip: Use your registered admin email & password.

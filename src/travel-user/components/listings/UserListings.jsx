@@ -1,5 +1,5 @@
 // src/travel-user/components/UserListings.jsx
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -31,10 +31,15 @@ function UserListings() {
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingError, setBookingError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [currentListing, setCurrentListing] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
   const [maxPrice, setMaxPrice] = useState(10000);
+  const nameInputRef = useRef(null);
   const [bookingDetails, setBookingDetails] = useState({
     name: "",
     checkIn: "",
@@ -48,6 +53,9 @@ function UserListings() {
   const authQuery = userToken ? `?auth=${userToken}` : "";
 
   const fetchListings = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+
     try {
       const res = await axios.get(`${DB_URL}/listings.json${authQuery}`);
       if (res.data) {
@@ -56,15 +64,40 @@ function UserListings() {
           ...value,
         }));
         setListings(loaded);
+      } else {
+        setListings([]);
       }
     } catch (err) {
       console.error("Error fetching listings:", err);
+      setError("We couldn't load listings right now. Please try again.");
+      setListings([]);
+    } finally {
+      setIsLoading(false);
     }
   }, [authQuery]);
 
   useEffect(() => {
     fetchListings();
   }, [fetchListings]);
+
+  useEffect(() => {
+    if (modalOpen) {
+      nameInputRef.current?.focus();
+    }
+  }, [modalOpen]);
+
+  useEffect(() => {
+    if (!modalOpen) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setModalOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [modalOpen]);
 
   const maxListingPrice = useMemo(() => {
     if (listings.length === 0) return 10000;
@@ -141,18 +174,24 @@ function UserListings() {
 
   const handleBooking = async () => {
     const { name, checkIn, checkOut, guests, address } = bookingDetails;
+    setBookingError("");
 
     if (!name || !checkIn || !checkOut || !address) {
+      setBookingError(
+        "Please fill in all booking details including your name.",
+      );
       toast.error("Please fill in all booking details including your name.");
       return;
     }
 
     if (checkIn < today) {
+      setBookingError("Check-In date cannot be in the past.");
       toast.error("Check-In date cannot be in the past.");
       return;
     }
 
     if (checkOut <= checkIn) {
+      setBookingError("Check-Out date must be after Check-In date.");
       toast.error("Check-Out date must be after Check-In date.");
       return;
     }
@@ -170,6 +209,8 @@ function UserListings() {
       status: "Pending",
     };
 
+    setIsBooking(true);
+
     try {
       await axios.post(`${DB_URL}/bookings.json${authQuery}`, newBooking);
       toast.success(
@@ -185,6 +226,9 @@ function UserListings() {
       });
     } catch (err) {
       console.error("Booking failed:", err);
+      setBookingError("We couldn't submit your booking. Please try again.");
+    } finally {
+      setIsBooking(false);
     }
   };
 
@@ -228,9 +272,13 @@ function UserListings() {
                 ))}
               </div>
               <div className="ul-price-range">
-                <div className="range-label">Max Price: ₹{maxPrice}</div>
+                <label className="range-label" htmlFor="price-filter">
+                  Max Price: ₹{maxPrice}
+                </label>
                 <div className="range-inputs">
                   <input
+                    id="price-filter"
+                    name="price"
                     type="range"
                     min="0"
                     max={maxListingPrice}
@@ -240,23 +288,40 @@ function UserListings() {
                 </div>
               </div>
               <div className="sort-box">
-                <label>
-                  Sort by
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                  >
-                    <option value="newest">Newest</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                  </select>
-                </label>
+                <label htmlFor="sort-by">Sort by</label>
+                <select
+                  id="sort-by"
+                  name="sortBy"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="newest">Newest</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
               </div>
             </div>
 
             <div className="listings-grid">
-              {filteredListings.length === 0 ? (
-                <p className="no-listings">No listings found.</p>
+              {isLoading ? (
+                <p className="no-listings">Loading listings...</p>
+              ) : error ? (
+                <div className="no-listings">
+                  {error}
+                  <div style={{ marginTop: "8px" }}>
+                    <button
+                      type="button"
+                      className="details-btn"
+                      onClick={() => fetchListings()}
+                    >
+                      Try again
+                    </button>
+                  </div>
+                </div>
+              ) : filteredListings.length === 0 ? (
+                <p className="no-listings">
+                  No listings match your current search. Try a different filter.
+                </p>
               ) : (
                 filteredListings.map((l) => (
                   <div key={l.id} className="listing-card">
@@ -313,10 +378,21 @@ function UserListings() {
 
       {modalOpen && currentListing && (
         <div className="booking-modal-overlay">
-          <div className="booking-modal">
-            <h2>Book {currentListing.name}</h2>
+          <div
+            className="booking-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="booking-modal-title"
+            tabIndex={-1}
+          >
+            <h2 id="booking-modal-title">Book {currentListing.name}</h2>
 
+            <label className="sr-only" htmlFor="booking-name">
+              Your name
+            </label>
             <input
+              id="booking-name"
+              ref={nameInputRef}
               type="text"
               placeholder="Enter your name"
               value={bookingDetails.name}
@@ -326,69 +402,82 @@ function UserListings() {
               className="booking-input"
             />
 
-            <label>
-              Check-in:
-              <input
-                type="date"
-                min={today}
-                value={bookingDetails.checkIn}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    checkIn: e.target.value,
-                  })
-                }
-                className="booking-input"
-              />
+            <label className="sr-only" htmlFor="booking-check-in">
+              Check-in date
             </label>
+            <input
+              id="booking-check-in"
+              name="checkIn"
+              type="date"
+              min={today}
+              value={bookingDetails.checkIn}
+              onChange={(e) =>
+                setBookingDetails({
+                  ...bookingDetails,
+                  checkIn: e.target.value,
+                })
+              }
+              className="booking-input"
+            />
 
-            <label>
-              Check-out:
-              <input
-                type="date"
-                min={bookingDetails.checkIn || today}
-                value={bookingDetails.checkOut}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    checkOut: e.target.value,
-                  })
-                }
-                className="booking-input"
-              />
+            <label className="sr-only" htmlFor="booking-check-out">
+              Check-out date
             </label>
+            <input
+              id="booking-check-out"
+              name="checkOut"
+              type="date"
+              min={bookingDetails.checkIn || today}
+              value={bookingDetails.checkOut}
+              onChange={(e) =>
+                setBookingDetails({
+                  ...bookingDetails,
+                  checkOut: e.target.value,
+                })
+              }
+              className="booking-input"
+            />
 
-            <label>
-              Guests:
-              <input
-                type="number"
-                min="1"
-                value={bookingDetails.guests}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    guests: Number(e.target.value),
-                  })
-                }
-                className="booking-input"
-              />
+            <label className="sr-only" htmlFor="booking-guests">
+              Guests
             </label>
+            <input
+              id="booking-guests"
+              name="guests"
+              type="number"
+              min="1"
+              value={bookingDetails.guests}
+              onChange={(e) =>
+                setBookingDetails({
+                  ...bookingDetails,
+                  guests: Number(e.target.value),
+                })
+              }
+              className="booking-input"
+            />
 
-            <label>
-              Address:
-              <input
-                type="text"
-                value={bookingDetails.address}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    address: e.target.value,
-                  })
-                }
-                className="booking-input"
-              />
+            <label className="sr-only" htmlFor="booking-address">
+              Address
             </label>
+            <input
+              id="booking-address"
+              name="address"
+              type="text"
+              value={bookingDetails.address}
+              onChange={(e) =>
+                setBookingDetails({
+                  ...bookingDetails,
+                  address: e.target.value,
+                })
+              }
+              className="booking-input"
+            />
 
+            {bookingError && (
+              <p className="no-listings" role="alert" aria-live="polite">
+                {bookingError}
+              </p>
+            )}
             <div className="booking-buttons">
               <button
                 onClick={() => setModalOpen(false)}
@@ -396,8 +485,12 @@ function UserListings() {
               >
                 Cancel
               </button>
-              <button onClick={handleBooking} className="confirm-btn">
-                Confirm Booking
+              <button
+                onClick={handleBooking}
+                className="confirm-btn"
+                disabled={isBooking}
+              >
+                {isBooking ? "Submitting..." : "Confirm Booking"}
               </button>
             </div>
           </div>

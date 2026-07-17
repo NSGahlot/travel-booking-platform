@@ -56,48 +56,72 @@ function AdminSignup() {
         </div>
 
         <form onSubmit={handleSignup} className="admin-signup-form">
-          <label className="admin-signup-label">
+          <label className="admin-signup-label" htmlFor="admin-signup-email">
             Email
-            <input
-              type="email"
-              className="admin-signup-input"
-              placeholder="admin@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
           </label>
+          <input
+            id="admin-signup-email"
+            name="email"
+            type="email"
+            className="admin-signup-input"
+            placeholder="admin@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
 
-          <label className="admin-signup-label">
+          <label className="admin-signup-label" htmlFor="admin-signup-password">
             Password
-            <input
-              type="password"
-              className="admin-signup-input"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
           </label>
+          <input
+            id="admin-signup-password"
+            name="password"
+            type="password"
+            className="admin-signup-input"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            required
+          />
 
-          <label className="admin-signup-label">
+          <label
+            className="admin-signup-label"
+            htmlFor="admin-signup-confirm-password"
+          >
             Confirm Password
-            <input
-              type="password"
-              className="admin-signup-input"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
           </label>
+          <input
+            id="admin-signup-confirm-password"
+            name="confirmPassword"
+            type="password"
+            className="admin-signup-input"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password"
+            required
+          />
 
           <button type="submit" className="admin-signup-btn">
             Signup
           </button>
 
-          {error && <p className="admin-signup-alert error">{error}</p>}
-          {success && <p className="admin-signup-alert success">{success}</p>}
+          {error && (
+            <p
+              className="admin-signup-alert error"
+              role="alert"
+              aria-live="polite"
+            >
+              {error}
+            </p>
+          )}
+          {success && (
+            <p className="admin-signup-alert success" aria-live="polite">
+              {success}
+            </p>
+          )}
         </form>
       </div>
     </div>

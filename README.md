@@ -1,39 +1,64 @@
 # 🌍 Travel Booking Platform
 
-A full-stack inspired Travel Booking Platform built with React, Redux Toolkit, Firebase Realtime Database and Vite.
-
-## ✨ Features
-
-- 👤 Admin Authentication
-- 🏨 Admin Listing Management (CRUD)
-- 🔍 Search Listings
-- ❤️ Wishlist
-- 🛒 Cart
-- 📅 Booking System
-- 📊 User Dashboard
-- 📱 Responsive Design
-- 🔥 Firebase Realtime Database
-- ⚡ Redux Toolkit State Management
-
-## 🛠️ Tech Stack
-
-- React.js
-- Redux Toolkit
-- React Router DOM
-- Firebase Realtime Database
-- Axios
-- CSS3
-- Vite
+A polished React + Vite travel booking platform with role-based user and admin flows, Firebase Realtime Database integration, booking management, wishlist, cart, and responsive UI.
 
 ## 🚀 Live Demo
 
-https://travel-booking-platform-v96n.vercel.app/
+[View Live Demo](https://travel-booking-platform-v96n.vercel.app/)
 
-## ⚙️ Installation
+## What this project demonstrates
+
+- React and Redux Toolkit state management
+- Role-based routing for users and admins
+- Firebase authentication and Realtime Database integration
+- Listing discovery, booking, cart, and wishlist flows
+- Accessible and responsive UI patterns for a portfolio-ready frontend project
+
+## ✨ Features
+
+- 👤 User & Admin Authentication
+- 🏨 Admin Listing Management (CRUD)
+- 🔍 Search & Filter Listings
+- ❤️ Wishlist
+- 🛒 Cart with Booking Flow
+- 📅 Check-in / Check-out Booking
+- 👥 Guest Selection
+- 💰 Automatic Price Calculation
+- 📊 User Dashboard
+- 📱 Fully Responsive Design
+
+## 🛠️ Tech Stack
+
+- React 19
+- Vite
+- Redux Toolkit
+- React Router
+- Firebase Realtime Database
+- Axios
+- React Hot Toast
+- ESLint
+
+## Project Highlights
+
+- User-facing dashboard with search and booking workflows
+- Admin dashboard for managing categories, listings, and bookings
+- Consistent loading, empty, and error states
+- Accessible form controls and modal experience
+
+## Getting Started
 
 ```bash
 git clone https://github.com/NSGahlot/travel-booking-platform.git
 cd travel-booking-platform
 npm install
 npm run dev
+```
 
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```

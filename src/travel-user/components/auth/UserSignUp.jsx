@@ -30,24 +30,36 @@ function UserSignup() {
     <div className="user-signup-card">
       <h2 className="user-signup-title">User Signup</h2>
       <form onSubmit={handleSignup} className="user-signup-form">
-        <label className="user-signup-label">Email</label>
+        <label className="user-signup-label" htmlFor="user-signup-email">
+          Email
+        </label>
         <input
+          id="user-signup-email"
+          name="email"
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           className="user-signup-input"
+          autoComplete="email"
+          aria-invalid={Boolean(error)}
         />
 
-        <label className="user-signup-label">Password</label>
+        <label className="user-signup-label" htmlFor="user-signup-password">
+          Password
+        </label>
         <input
+          id="user-signup-password"
+          name="password"
           type="password"
           placeholder="Create a password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className="user-signup-input"
+          autoComplete="new-password"
+          aria-invalid={Boolean(error)}
         />
 
         <button type="submit" className="user-signup-btn">
@@ -55,7 +67,11 @@ function UserSignup() {
         </button>
       </form>
 
-      {error && <p className="user-signup-error">{error}</p>}
+      {error && (
+        <p className="user-signup-error" role="alert" aria-live="polite">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

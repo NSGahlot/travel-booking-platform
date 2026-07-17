@@ -58,20 +58,35 @@ function BookingForm({ listing }) {
 
   return (
     <div className="booking-form">
+      <label className="sr-only" htmlFor="booking-check-in">
+        Check-in date
+      </label>
       <input
+        id="booking-check-in"
+        name="checkIn"
         type="date"
         value={formData.checkIn}
         onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
         className="booking-input"
       />
+      <label className="sr-only" htmlFor="booking-check-out">
+        Check-out date
+      </label>
       <input
+        id="booking-check-out"
+        name="checkOut"
         type="date"
         min={formData.checkIn}
         value={formData.checkOut}
         onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
         className="booking-input"
       />
+      <label className="sr-only" htmlFor="booking-guests">
+        Guests
+      </label>
       <input
+        id="booking-guests"
+        name="guests"
         type="number"
         min="1"
         value={formData.guests}
@@ -80,7 +95,7 @@ function BookingForm({ listing }) {
         }
         className="booking-input guests-input"
       />
-      <button onClick={handleBookNow} className="booking-btn">
+      <button type="button" onClick={handleBookNow} className="booking-btn">
         Book Now
       </button>
     </div>

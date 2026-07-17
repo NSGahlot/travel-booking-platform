@@ -1,12 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
-import {
-  getListings,
-  addListing as addListingService,
-  updateListing as updateListingService,
-  deleteListing as deleteListingService,
-} from "../../../services/listingService";
+import { getListings } from "../../../services/listingService";
 
 import {
   setListings,
@@ -19,6 +15,7 @@ import { setCategories } from "../../../features/admin/categorySlice";
 
 import "./AdminListings.css";
 
+const DB_URL = "https://travel-app-2d78a-default-rtdb.firebaseio.com";
 const FIXED_IMAGE_URL =
   "https://static2.tripoto.com/media/filter/nl/img/2025875/TripDocument/1601531054_these_traveling_tips_helps_me_having_hassle_free_journey.jpg";
 
@@ -38,10 +35,17 @@ function AdminListings() {
     available: true,
   });
   const [editingId, setEditingId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   const authQuery = adminToken ? `?auth=${adminToken}` : "";
 
   const fetchListings = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+
     try {
       const data = await getListings();
 
@@ -57,6 +61,10 @@ function AdminListings() {
       }
     } catch (err) {
       console.error("Error fetching listings:", err);
+      setError("We couldn't load listings right now. Please try again.");
+      dispatch(setListings([]));
+    } finally {
+      setIsLoading(false);
     }
   }, [dispatch]);
 
@@ -75,9 +83,12 @@ function AdminListings() {
       !newListing.address ||
       !newListing.category
     ) {
-      alert("Name, Price, Address and Category are required.");
+      setError("Please complete the required fields before saving.");
       return;
     }
+
+    setIsSaving(true);
+    setError("");
 
     try {
       if (editingId) {
@@ -107,17 +118,24 @@ function AdminListings() {
       });
     } catch (err) {
       console.error("Error saving listing:", err);
-      alert("Failed to save listing. Check console for details.");
+      setError("We couldn't save this listing. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async (id) => {
+    setDeletingId(id);
+    setError("");
+
     try {
       await axios.delete(`${DB_URL}/listings/${id}.json${authQuery}`);
       dispatch(deleteListing(id));
     } catch (err) {
       console.error("Error deleting listing:", err);
-      alert("Failed to delete listing. Check console for details.");
+      setError("We couldn't delete this listing. Please try again.");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -129,9 +147,15 @@ function AdminListings() {
   return (
     <div className="admin-listings-container">
       <h2 className="admin-title">Admin Listings</h2>
+      {error && <p className="no-listings">{error}</p>}
       {/* Add/Edit Form */}
       <div className="form-card">
+        <label className="sr-only" htmlFor="listing-name">
+          Name
+        </label>
         <input
+          id="listing-name"
+          name="name"
           type="text"
           placeholder="Name"
           value={newListing.name}
@@ -140,7 +164,12 @@ function AdminListings() {
           }
           className="form-input"
         />
+        <label className="sr-only" htmlFor="listing-price">
+          Price
+        </label>
         <input
+          id="listing-price"
+          name="price"
           type="number"
           placeholder="Price"
           value={newListing.price}
@@ -149,7 +178,12 @@ function AdminListings() {
           }
           className="form-input"
         />
+        <label className="sr-only" htmlFor="listing-address">
+          Address
+        </label>
         <input
+          id="listing-address"
+          name="address"
           type="text"
           placeholder="Address"
           value={newListing.address}
@@ -158,7 +192,12 @@ function AdminListings() {
           }
           className="form-input"
         />
+        <label className="sr-only" htmlFor="listing-category">
+          Category
+        </label>
         <select
+          id="listing-category"
+          name="category"
           value={newListing.category}
           onChange={(e) =>
             setNewListing({ ...newListing, category: e.target.value })
@@ -172,7 +211,12 @@ function AdminListings() {
             </option>
           ))}
         </select>
+        <label className="sr-only" htmlFor="listing-description">
+          Description
+        </label>
         <textarea
+          id="listing-description"
+          name="description"
           placeholder="Description"
           value={newListing.description}
           onChange={(e) =>
@@ -191,8 +235,10 @@ function AdminListings() {
         /> */}
 
         {/* Availability Checkbox */}
-        <label className="checkbox-row">
+        <label className="checkbox-row" htmlFor="listing-available">
           <input
+            id="listing-available"
+            name="available"
             type="checkbox"
             checked={newListing.available}
             onChange={(e) =>
@@ -202,68 +248,85 @@ function AdminListings() {
           Available
         </label>
 
-        <button onClick={handleAddOrUpdate} className="primary-btn">
-          {editingId ? "Update Listing" : "Add Listing"}
+        <button
+          onClick={handleAddOrUpdate}
+          className="primary-btn"
+          disabled={isSaving}
+        >
+          {isSaving
+            ? "Saving..."
+            : editingId
+              ? "Update Listing"
+              : "Add Listing"}
         </button>
       </div>
 
       {/* Listings Table */}
-      <table className="listings-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Address</th>
-            <th>Description</th>
-            <th>Image</th>
-            <th>Available</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {listings.map((l) => (
-            <tr key={l.id} className="row-center">
-              <td>{l.name}</td>
-              <td>{l.category}</td>
-              <td>₹{l.price}</td>
-              <td>{l.address}</td>
-              <td className="desc-cell">{l.description}</td>
-              <td>
-                <img src={l.image || FIXED_IMAGE_URL} alt={l.name} />
-              </td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={l.available}
-                  onChange={async (e) => {
-                    const updatedListing = {
-                      ...l,
-                      available: e.target.checked,
-                    };
-                    await axios.put(
-                      `${DB_URL}/listings/${l.id}.json${authQuery}`,
-                      updatedListing,
-                    );
-                    dispatch(updateListing(updatedListing));
-                  }}
-                />
-              </td>
-              <td>
-                <button onClick={() => handleEdit(l)} className="edit-btn">
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(l.id)}
-                  className="delete-btn"
-                >
-                  Delete
-                </button>
-              </td>
+      {isLoading ? (
+        <p className="no-listings">Loading listings...</p>
+      ) : listings.length === 0 ? (
+        <p className="no-listings">
+          No listings yet. Add your first stay to get started.
+        </p>
+      ) : (
+        <table className="listings-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Address</th>
+              <th>Description</th>
+              <th>Image</th>
+              <th>Available</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {listings.map((l) => (
+              <tr key={l.id} className="row-center">
+                <td>{l.name}</td>
+                <td>{l.category}</td>
+                <td>₹{l.price}</td>
+                <td>{l.address}</td>
+                <td className="desc-cell">{l.description}</td>
+                <td>
+                  <img src={l.image || FIXED_IMAGE_URL} alt={l.name} />
+                </td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={l.available}
+                    onChange={async (e) => {
+                      const updatedListing = {
+                        ...l,
+                        available: e.target.checked,
+                      };
+                      await axios.put(
+                        `${DB_URL}/listings/${l.id}.json${authQuery}`,
+                        updatedListing,
+                      );
+                      dispatch(updateListing(updatedListing));
+                    }}
+                  />
+                </td>
+                <td>
+                  <button onClick={() => handleEdit(l)} className="edit-btn">
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(l.id)}
+                    className="delete-btn"
+                    disabled={deletingId === l.id}
+                  >
+                    {deletingId === l.id ? "Deleting..." : "Delete"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

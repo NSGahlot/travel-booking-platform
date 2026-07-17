@@ -5,7 +5,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(900px 500px at 50% -10%, #e0f2fe 0%, #f7f9fc 55%, #ffffff 100%);
+    background: radial-gradient(ellipse 900px 500px at 50% -10%, #e0f2fe 0%, #f7f9fc 55%, #ffffff 100%);
     text-align: center;
     padding: 20px;
 }
